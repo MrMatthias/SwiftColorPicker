@@ -1,6 +1,5 @@
 //
 //  ColorWell.swift
-//  ScribbleKeys
 //
 //  Created by Matthias Schlemm on 12/03/15.
 //  Copyright (c) 2015 Sixpolys. All rights reserved.
@@ -8,7 +7,7 @@
 
 import UIKit
 
-class ColorWell: UIView {
+class ColorWell: UIButton {
 
     var color:UIColor = UIColor.blueColor()
     var previewColor:UIColor?
@@ -19,11 +18,6 @@ class ColorWell: UIView {
         opaque = false
     }
     
-    init(color:UIColor) {
-        super.init()
-        self.color = color
-        commonInit()
-    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)

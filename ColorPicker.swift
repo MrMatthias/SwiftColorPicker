@@ -1,6 +1,5 @@
 //
 //  ColorPicker.swift
-//  ScribbleKeys
 //
 //  Created by Matthias Schlemm on 05/03/15.
 //  Copyright (c) 2015 Sixpolys. All rights reserved.
@@ -11,7 +10,7 @@ import ImageIO
 
 class ColorPicker: UIView {
     
-    class PickerImage {
+    private class PickerImage {
         var provider:CGDataProvider!
         var imageSource:CGImageSource?
         var dataRef:CFDataRef?
@@ -22,40 +21,117 @@ class ColorPicker: UIView {
             self.data = data
         }
     }
+    private var pickerImage1:PickerImage?
+    private var pickerImage2:PickerImage?
+    private var image:UIImage?
+    private var data1Shown = false
+    private lazy var opQueue:NSOperationQueue = {return NSOperationQueue()}()
+    private var lock:NSLock = NSLock()
     
-    lazy var opQueue:NSOperationQueue = {
-        return NSOperationQueue()
-    }()
+    var onColorChange:((color:UIColor, finished:Bool)->Void)? = nil
     
-    var pickerImage1:PickerImage?
-    var pickerImage2:PickerImage?
-    var lock:NSLock = NSLock()
     
-    var _h:Double = 30
-    var h:Double {
+    var a:CGFloat = 1
+    private var _h:CGFloat = 0.3
+    var h:CGFloat {
         set(value) {
-            _h = value
+            if value > 1 {
+                _h = min(1, max(0, value/255))
+            } else {
+                _h = min(1, max(0, value))
+            }
+            handleColorChange(pointToColor(currentPoint), changing: false)
             renderBitmap()
         }
         get {
             return _h
         }
     }
-    var image:UIImage?
-    
-    var data1Shown = false
+    private var currentPoint:CGPoint = CGPointZero
+    private var _color:UIColor = UIColor.redColor()
+    var color:UIColor {
+        set(value) {
+            _color = value
+            var hue:CGFloat = 1
+            var saturation:CGFloat = 1
+            var brightness:CGFloat = 1
+            var alpha:CGFloat = 1
+            _color.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
+            a = alpha
+            _h = hue
+            currentPoint = CGPointMake(saturation * bounds.width, brightness * bounds.height)
+            renderBitmap()
+            handleColorChange(_color, changing: false)
+        }
+        get {
+            return _color
+        }
+    }
  
     
-    override init() {
-        super.init()
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        commonInit()
     }
 
     required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+        commonInit()
+    }
+    override func updateConstraints() {
+        super.updateConstraints()
+        println("UPDATE CONTRAINTS \(frame.size)")
     }
     
+    func commonInit() {
+        userInteractionEnabled = true
+        clipsToBounds = false
+    }
+
     
-    func renderBitmap() {
+    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
+        let touch = touches.first as! UITouch
+        handleTouche(touch, ended: false)
+    }
+    
+    override func touchesMoved(touches: Set<NSObject>, withEvent event: UIEvent) {
+        var touch = touches.first as! UITouch
+        handleTouche(touch, ended: false)
+    }
+    
+    override func touchesEnded(touches: Set<NSObject>, withEvent event: UIEvent) {
+        var touch = touches.first as! UITouch
+        handleTouche(touch, ended: true)
+    }
+    
+    private func handleColorChange(color:UIColor, changing:Bool) {
+        _color = color
+        if let handler = onColorChange {
+            handler(color: color, finished:!changing)
+        }
+        setNeedsDisplay()
+    }
+    
+    private func handleTouche(touch:UITouch, ended:Bool) {
+        // set current point
+        let point = touch.locationInView(self)
+        if CGRectContainsPoint(self.bounds, point) {
+            currentPoint = point
+        } else {
+            let x:CGFloat = min(bounds.width, max(0, point.x))
+            let y:CGFloat = min(bounds.width, max(0, point.y))
+            currentPoint = CGPointMake(x, y)
+        }
+        handleColorChange(pointToColor(point), changing: !ended)
+    }
+    
+    private func pointToColor(point:CGPoint) ->UIColor {
+        let s:CGFloat = min(1, max(0, (1.0 / bounds.width) * point.x))
+        let b:CGFloat = min(1, max(0, (1.0 / bounds.height) * point.y))
+        return UIColor(hue: h, saturation: s, brightness: b, alpha:a)
+    }
+    
+    private func renderBitmap() {
         if self.bounds.isEmpty {
             return
         }
@@ -65,8 +141,8 @@ class ColorPicker: UIView {
         }
         
         opQueue.addOperationWithBlock { () -> Void in
-            var width = UInt(bounds.width)
-            var height = UInt(bounds.height)
+            var width = UInt(self.bounds.width)
+            var height = UInt(self.bounds.height)
             
             // initialize data stores
             if  self.pickerImage1 == nil {
@@ -98,55 +174,56 @@ class ColorPicker: UIView {
       
     }
     
-    func writeColorData(inout d:[UInt8]) {
+    private func writeColorData(inout d:[UInt8]) {
         var width = UInt(bounds.width)
         var height = UInt(bounds.height)
         var i = 0
-        var double_h:Double = Double(h) / 60
-        var sector:Int = Int(floor(double_h))
-        var f:Double = double_h - Double(sector)
-        var f1:Double = 1.0 - f
-        var p = 0.0
-        var q = 0.0
-        var t = 0.0
-        var sd:Double = 1.0 / 256
-        var vd = 1 / 256
-        var a:UInt8 = 255
-        var double_v:Double = 0
-        var double_s:Double = 0
+        var h360:CGFloat = (h * 360) / 60.0
+        var sector:Int = Int(floor(h360))
+        var f:CGFloat = h360 - CGFloat(sector)
+        var f1:CGFloat = 1.0 - f
+        var p:CGFloat = 0.0
+        var q:CGFloat = 0.0
+        var t:CGFloat = 0.0
+        var sd:CGFloat = 1.0 / bounds.width
+        var vd:CGFloat =  1 / bounds.height
+        var a:UInt8 = UInt8(self.a * 255)
+        var double_v:CGFloat = 0
+        var double_s:CGFloat = 0
+
         
         for v in 0..<Int(self.bounds.height) {
-            double_v = Double(v)
+            double_v = CGFloat(v) * vd
             for s in 0..<Int(self.bounds.width) {
-                double_s = Double(s) * sd
-                p = double_v * (1.0 - double_s)
-                q = double_v * (1.0 - double_s * f)
-                t = double_v * ( 1.0 - double_s  * f1)
+                double_s = CGFloat(s) * sd
+                p = double_v * (1.0 - double_s) * 255.0
+                q = double_v * (1.0 - double_s * f) * 255.0
+                t = double_v * ( 1.0 - double_s  * f1) * 255.0
                 i = (v * Int(width) + s) * 4
-                
+                var v255 = double_v * 255
                 switch(sector) {
                 case 0:
-                    d[i+1] = UInt8(v)
+                    d[i+1] = UInt8(v255)
                     d[i+2] = UInt8(t)
                     d[i+3] = UInt8(p)
                 case 1:
                     d[i+1] = UInt8(q)
-                    d[i+2] = UInt8(v)
+                    d[i+2] = UInt8(v255)
                     d[i+3] = UInt8(p)
                 case 2:
                     d[i+1] = UInt8(p)
-                    d[i+2] = UInt8(v)
+                    d[i+2] = UInt8(v255)
                     d[i+3] = UInt8(t)
                 case 3:
                     d[i+1] = UInt8(p)
                     d[i+2] = UInt8(q)
-                    d[i+3] = UInt8(v)
+                    d[i+3] = UInt8(v255)
                 case 4:
                     d[i+1] = UInt8(t)
                     d[i+2] = UInt8(p)
-                    d[i+3] = UInt8(v)
+                    d[i+3] = UInt8(v255)
                 default:
-                    d[i+1] = UInt8(v)
+                    d[i+1] = UInt8(v255)
                     d[i+2] = UInt8(p)
                     d[i+3] = UInt8(q)
                 }
@@ -156,7 +233,7 @@ class ColorPicker: UIView {
         }
     }
     
-    func dataToPickerImage(d:[UInt8],  inout pickerImage:PickerImage, width:UInt, height:UInt) {
+    private func dataToPickerImage(d:[UInt8],  inout pickerImage:PickerImage, width:UInt, height:UInt) {
         let colorSpace = CGColorSpaceCreateDeviceRGB()
         let bitmapInfo = CGBitmapInfo(CGImageAlphaInfo.PremultipliedFirst.rawValue)
         
@@ -166,8 +243,8 @@ class ColorPicker: UIView {
         
         pickerImage.imageSource = CGImageSourceCreateWithDataProvider(pickerImage.provider, nil)
         
-        var cgimg = CGImageCreate(width, height, 8, 32, width * UInt(4),
-            colorSpace, bitmapInfo, pickerImage.provider!, nil, true, kCGRenderingIntentDefault)
+        var cgimg = CGImageCreate(Int(width), Int(height), Int(8), Int(32), Int(width) * Int(4),
+            colorSpace, bitmapInfo, pickerImage.provider!, nil as  UnsafePointer<CGFloat>, true, kCGRenderingIntentDefault)
         pickerImage.image = UIImage(CGImage: cgimg)
     }
 
@@ -176,6 +253,20 @@ class ColorPicker: UIView {
         if let img = image {
             img.drawInRect(rect)
         }
+        
+        //// Oval Drawing
+        var ovalPath = UIBezierPath(ovalInRect: CGRectMake(currentPoint.x - 5, currentPoint.y - 5, 10, 10))
+        UIColor.whiteColor().setStroke()
+        ovalPath.lineWidth = 1
+        ovalPath.stroke()
+        
+        
+        //// Oval 2 Drawing
+        var oval2Path = UIBezierPath(ovalInRect: CGRectMake(currentPoint.x - 4, currentPoint.y - 4, 8, 8))
+        UIColor.blackColor().setStroke()
+        oval2Path.lineWidth = 1
+        oval2Path.stroke()
+        
         
     }
 

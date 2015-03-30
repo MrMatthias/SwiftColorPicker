@@ -1,6 +1,5 @@
 //
 //  HuePicker.swift
-//  ScribbleKeys
 //
 //  Created by Matthias Schlemm on 06/03/15.
 //  Copyright (c) 2015 Sixpolys. All rights reserved.
@@ -22,17 +21,35 @@ class HuePicker: UIView {
             self.b = b
         }
     }
-
-    var h:Double = 40
+    var _h:UInt = 40
+    var h:UInt {
+        set(value) {
+            _h = max(255, min(0, value))
+            currentPoint = CGPointMake((bounds.width / 255) * CGFloat(_h), 0)
+            setNeedsDisplay()
+        }
+        get {
+            return _h
+        }
+    }
     var image:UIImage?
     private var data:[Pixel]?
+    private var currentPoint = CGPointZero
+    private var handleRect = CGRectZero
+    var handleColor:UIColor = UIColor.blackColor()
     
-    override init() {
-        super.init()
+    var onHueChange:((hue:UInt, finished:Bool) -> Void)?
+    
+    func setHueFromColor(color:UIColor) {
+        var h:CGFloat = 0
+        color.getHue(&h, saturation: nil, brightness: nil, alpha: nil)
+        h *= 255
+        self.h = UInt(h)
     }
     
     required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+        userInteractionEnabled = true
     }
     
     
@@ -96,13 +113,34 @@ class HuePicker: UIView {
         let bitmapInfo = CGBitmapInfo(CGImageAlphaInfo.PremultipliedFirst.rawValue)
         var d = data!
         let provider = CGDataProviderCreateWithCFData(NSData(bytes: &d, length: data!.count * sizeof(Pixel)))
-        var cgimg = CGImageCreate(width, height, 8, 32, width * UInt(sizeof(Pixel)),
+        var cgimg = CGImageCreate(Int(width), Int(height), 8, 32, Int(width) * Int(sizeof(Pixel)),
             colorSpace, bitmapInfo, provider, nil, true, kCGRenderingIntentDefault)
         
         
         image = UIImage(CGImage: cgimg)
         
     }
+    
+    private func handleTouch(touch:UITouch, finished:Bool) {
+        let point = touch.locationInView(self)
+        currentPoint = CGPointMake(max(0, min(bounds.width, point.x)) , 0)
+        handleRect = CGRectMake(currentPoint.x-3, 0, 6, bounds.height)
+        onHueChange?(hue: h, finished:finished)
+        setNeedsDisplay()
+    }
+    
+    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
+        handleTouch(touches.first as! UITouch, finished: false)
+    }
+    
+    override func touchesMoved(touches: Set<NSObject>, withEvent event: UIEvent) {
+        handleTouch(touches.first as! UITouch, finished: false)
+    }
+    
+    override func touchesEnded(touches: Set<NSObject>, withEvent event: UIEvent) {
+        handleTouch(touches.first as! UITouch, finished: true)
+    }
+    
     
     override func drawRect(rect: CGRect) {
         if image == nil {
@@ -111,6 +149,10 @@ class HuePicker: UIView {
         if let img = image {
             img.drawInRect(rect)
         }
+        
+        var path = UIBezierPath(roundedRect: handleRect, cornerRadius: 3)
+        handleColor.setStroke()
+        path.stroke()
     }
 
 }
