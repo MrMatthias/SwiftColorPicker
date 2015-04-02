@@ -7,11 +7,11 @@
 
 import UIKit
 
-class ColorWell: UIButton {
+public class ColorWell: UIButton {
 
-    var color:UIColor = UIColor.blueColor()
-    var previewColor:UIColor?
-    var borderColor:UIColor = UIColor.whiteColor()
+    public var color:UIColor = UIColor.blueColor()
+    public var previewColor:UIColor?
+    public var borderColor:UIColor = UIColor.whiteColor()
     
     func commonInit() {
         backgroundColor = UIColor.clearColor()
@@ -24,12 +24,12 @@ class ColorWell: UIButton {
         commonInit()
     }
     
-    required init(coder aDecoder: NSCoder) {
+    required public init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         commonInit()
     }
 
-    override func drawRect(rect: CGRect) {
+    override public func drawRect(rect: CGRect) {
         var ovalPath = UIBezierPath(ovalInRect: CGRectMake(5.5, 5.5, 35, 35))
         color.setFill()
         ovalPath.fill()

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class HuePicker: UIView {
+public class HuePicker: UIView {
     
     struct Pixel {
         var a:UInt8 = 255
@@ -22,7 +22,7 @@ class HuePicker: UIView {
         }
     }
     var _h:UInt = 40
-    var h:UInt {
+    public var h:UInt {
         set(value) {
             _h = max(255, min(0, value))
             currentPoint = CGPointMake((bounds.width / 255) * CGFloat(_h), 0)
@@ -36,18 +36,18 @@ class HuePicker: UIView {
     private var data:[Pixel]?
     private var currentPoint = CGPointZero
     private var handleRect = CGRectZero
-    var handleColor:UIColor = UIColor.blackColor()
+    public var handleColor:UIColor = UIColor.blackColor()
     
-    var onHueChange:((hue:UInt, finished:Bool) -> Void)?
+    public var onHueChange:((hue:UInt, finished:Bool) -> Void)?
     
-    func setHueFromColor(color:UIColor) {
+    public func setHueFromColor(color:UIColor) {
         var h:CGFloat = 0
         color.getHue(&h, saturation: nil, brightness: nil, alpha: nil)
         h *= 255
         self.h = UInt(h)
     }
     
-    required init(coder aDecoder: NSCoder) {
+    required public init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         userInteractionEnabled = true
     }
@@ -129,20 +129,20 @@ class HuePicker: UIView {
         setNeedsDisplay()
     }
     
-    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
+    override public func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
         handleTouch(touches.first as! UITouch, finished: false)
     }
     
-    override func touchesMoved(touches: Set<NSObject>, withEvent event: UIEvent) {
+    override public func touchesMoved(touches: Set<NSObject>, withEvent event: UIEvent) {
         handleTouch(touches.first as! UITouch, finished: false)
     }
     
-    override func touchesEnded(touches: Set<NSObject>, withEvent event: UIEvent) {
+    override public func touchesEnded(touches: Set<NSObject>, withEvent event: UIEvent) {
         handleTouch(touches.first as! UITouch, finished: true)
     }
     
     
-    override func drawRect(rect: CGRect) {
+    override public func drawRect(rect: CGRect) {
         if image == nil {
             renderBitmap()
         }

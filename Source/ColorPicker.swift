@@ -8,7 +8,7 @@
 import UIKit
 import ImageIO
 
-class ColorPicker: UIView {
+public class ColorPicker: UIView {
     
     private class PickerImage {
         var provider:CGDataProvider!
@@ -28,12 +28,12 @@ class ColorPicker: UIView {
     private lazy var opQueue:NSOperationQueue = {return NSOperationQueue()}()
     private var lock:NSLock = NSLock()
     
-    var onColorChange:((color:UIColor, finished:Bool)->Void)? = nil
+    public var onColorChange:((color:UIColor, finished:Bool)->Void)? = nil
     
     
-    var a:CGFloat = 1
+    public var a:CGFloat = 1
     private var _h:CGFloat = 0.3
-    var h:CGFloat {
+    public var h:CGFloat {
         set(value) {
             if value > 1 {
                 _h = min(1, max(0, value/255))
@@ -49,7 +49,7 @@ class ColorPicker: UIView {
     }
     private var currentPoint:CGPoint = CGPointZero
     private var _color:UIColor = UIColor.redColor()
-    var color:UIColor {
+    public var color:UIColor {
         set(value) {
             _color = value
             var hue:CGFloat = 1
@@ -69,16 +69,16 @@ class ColorPicker: UIView {
     }
  
     
-    override init(frame: CGRect) {
+    public override init(frame: CGRect) {
         super.init(frame: frame)
         commonInit()
     }
 
-    required init(coder aDecoder: NSCoder) {
+    public required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         commonInit()
     }
-    override func updateConstraints() {
+    public override func updateConstraints() {
         super.updateConstraints()
         println("UPDATE CONTRAINTS \(frame.size)")
     }
@@ -89,17 +89,17 @@ class ColorPicker: UIView {
     }
 
     
-    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
+    public override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
         let touch = touches.first as! UITouch
         handleTouche(touch, ended: false)
     }
     
-    override func touchesMoved(touches: Set<NSObject>, withEvent event: UIEvent) {
+    public override func touchesMoved(touches: Set<NSObject>, withEvent event: UIEvent) {
         var touch = touches.first as! UITouch
         handleTouche(touch, ended: false)
     }
     
-    override func touchesEnded(touches: Set<NSObject>, withEvent event: UIEvent) {
+    public override func touchesEnded(touches: Set<NSObject>, withEvent event: UIEvent) {
         var touch = touches.first as! UITouch
         handleTouche(touch, ended: true)
     }
@@ -248,7 +248,7 @@ class ColorPicker: UIView {
         pickerImage.image = UIImage(CGImage: cgimg)
     }
 
-    override func drawRect(rect: CGRect) {
+    public override func drawRect(rect: CGRect) {
 
         if let img = image {
             img.drawInRect(rect)

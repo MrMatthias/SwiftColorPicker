@@ -7,21 +7,21 @@
 
 import UIKit
 
-class ColorPickerController: NSObject {
+public class ColorPickerController: NSObject {
     
-    var onColorChange:((color:UIColor)->Void)? = nil
+    public var onColorChange:((color:UIColor)->Void)? = nil
     
     // Hue Picker
-    var huePicker:HuePicker
+    public var huePicker:HuePicker
     
     // Color Well
-    var colorWell:ColorWell
+    public var colorWell:ColorWell
     
     
     // Color Picker
-    var colorPicker:ColorPicker
+    public var colorPicker:ColorPicker
     
-    var color:UIColor? {
+    public var color:UIColor? {
         set(value) {
             colorPicker.color = value!
             colorWell.color = value!
@@ -32,7 +32,7 @@ class ColorPickerController: NSObject {
         }
     }
     
-    init(svPickerView:ColorPicker, huePickerView:HuePicker, colorWell:ColorWell) {
+    public init(svPickerView:ColorPicker, huePickerView:HuePicker, colorWell:ColorWell) {
         self.huePicker = huePickerView
         self.colorPicker = svPickerView
         self.colorWell = colorWell
