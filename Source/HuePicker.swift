@@ -9,18 +9,6 @@ import UIKit
 
 public class HuePicker: UIView {
     
-    struct Pixel {
-        var a:UInt8 = 255
-        var r:UInt8
-        var g:UInt8
-        var b:UInt8
-        init(a:UInt8, r:UInt8, g:UInt8, b:UInt8) {
-            self.a = a
-            self.r = r
-            self.g = g
-            self.b = b
-        }
-    }
     var _h:UInt = 40
     public var h:UInt {
         set(value) {
@@ -33,7 +21,7 @@ public class HuePicker: UIView {
         }
     }
     var image:UIImage?
-    private var data:[Pixel]?
+    private var data:[UInt8]?
     private var currentPoint = CGPointZero
     private var handleRect = CGRectZero
     public var handleColor:UIColor = UIColor.blackColor()
@@ -54,7 +42,6 @@ public class HuePicker: UIView {
     
     
     func renderBitmap() {
-        layer.zPosition = 2000
         if bounds.isEmpty {
             return
         }
@@ -63,7 +50,7 @@ public class HuePicker: UIView {
         var height = UInt(bounds.height)
         
         if  data == nil {
-            data = [Pixel]()
+            data = [UInt8](count: Int(width * height) * 4, repeatedValue: UInt8(255))
         }
 
         var p = 0.0
@@ -74,8 +61,10 @@ public class HuePicker: UIView {
         var a:UInt8 = 255
         var double_v:Double = 0
         var double_s:Double = 0
+        var widthRatio:Double = 360 / Double(bounds.width)
+        var d = data!
         for hi in 0..<Int(bounds.width) {
-            var double_h:Double = Double(hi) / 60
+            var double_h:Double = widthRatio * Double(hi) / 60
             var sector:Int = Int(floor(double_h))
             var f:Double = double_h - Double(sector)
             var f1:Double = 1.0 - f
@@ -84,36 +73,50 @@ public class HuePicker: UIView {
             p = double_v * (1.0 - double_s) * 255
             q = double_v * (1.0 - double_s * f) * 255
             t = double_v * ( 1.0 - double_s  * f1) * 255
-            
-            
+            var v255 = double_v * 255
+            i = hi * 4
             switch(sector) {
             case 0:
-                data!.insert(Pixel(a: a, r: UInt8(255), g: UInt8(t), b: UInt8(p)), atIndex: i)
+                d[i+1] = UInt8(v255)
+                d[i+2] = UInt8(t)
+                d[i+3] = UInt8(p)
             case 1:
-                data!.insert(Pixel(a: a, r: UInt8(q), g: UInt8(255), b: UInt8(p)), atIndex: i)
+                d[i+1] = UInt8(q)
+                d[i+2] = UInt8(v255)
+                d[i+3] = UInt8(p)
             case 2:
-                data!.insert(Pixel(a: a, r: UInt8(p), g: UInt8(255), b: UInt8(t)), atIndex: i)
+                d[i+1] = UInt8(p)
+                d[i+2] = UInt8(v255)
+                d[i+3] = UInt8(t)
             case 3:
-                data!.insert(Pixel(a: a, r: UInt8(p), g: UInt8(q), b: UInt8(255)), atIndex: i)
+                d[i+1] = UInt8(p)
+                d[i+2] = UInt8(q)
+                d[i+3] = UInt8(v255)
             case 4:
-                data!.insert(Pixel(a: a, r: UInt8(t), g: UInt8(p), b: UInt8(255)), atIndex: i)
+                d[i+1] = UInt8(t)
+                d[i+2] = UInt8(p)
+                d[i+3] = UInt8(v255)
             default:
-                data!.insert(Pixel(a: a, r: UInt8(255), g: UInt8(p), b: UInt8(q)), atIndex: i)
+                d[i+1] = UInt8(v255)
+                d[i+2] = UInt8(p)
+                d[i+3] = UInt8(q)
             }
-            i = hi
         }
+        var sourcei = 0
         for v in 1..<Int(bounds.height) {
-            
             for s in 0..<Int(bounds.width) {
-                data!.insert(data![s], atIndex: v * Int(bounds.width) + s)
-                
+                sourcei = s * 4
+                i = (v * Int(width) * 4) + sourcei
+                d[i+1] = d[sourcei+1]
+                d[i+2] = d[sourcei+2]
+                d[i+3] = d[sourcei+3]
             }
         }
         let colorSpace = CGColorSpaceCreateDeviceRGB()
         let bitmapInfo = CGBitmapInfo(CGImageAlphaInfo.PremultipliedFirst.rawValue)
-        var d = data!
-        let provider = CGDataProviderCreateWithCFData(NSData(bytes: &d, length: data!.count * sizeof(Pixel)))
-        var cgimg = CGImageCreate(Int(width), Int(height), 8, 32, Int(width) * Int(sizeof(Pixel)),
+
+        let provider = CGDataProviderCreateWithCFData(NSData(bytes: &d, length: d.count * sizeof(UInt8)))
+        var cgimg = CGImageCreate(Int(width), Int(height), 8, 32, Int(width) * Int(sizeof(UInt8) * 4),
             colorSpace, bitmapInfo, provider, nil, true, kCGRenderingIntentDefault)
         
         
