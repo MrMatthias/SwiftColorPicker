@@ -125,6 +125,8 @@ public class HuePicker: UIView {
         let point = touch.locationInView(self)
         currentPoint = CGPointMake(max(0, min(bounds.width, point.x)) , 0)
         handleRect = CGRectMake(currentPoint.x-3, 0, 6, bounds.height)
+        var fH = (bounds.width / 255) * currentPoint.x
+        _h = UInt(fH)
         onHueChange?(hue: h, finished:finished)
         setNeedsDisplay()
     }

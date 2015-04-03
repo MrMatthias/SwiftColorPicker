@@ -9,8 +9,27 @@ import UIKit
 
 public class ColorWell: UIButton {
 
-    public var color:UIColor = UIColor.blueColor()
-    public var previewColor:UIColor?
+    private var _color:UIColor = UIColor.blueColor()
+    public var color:UIColor {
+        set(value) {
+            _color = value
+            setNeedsDisplay()
+        }
+        get {
+            return _color
+        }
+    }
+
+    private var _previewColor:UIColor?
+    public var previewColor:UIColor? {
+        set(value) {
+            _previewColor = value
+            setNeedsDisplay()
+        }
+        get {
+            return _previewColor
+        }
+    }
     public var borderColor:UIColor = UIColor.whiteColor()
     
     func commonInit() {
