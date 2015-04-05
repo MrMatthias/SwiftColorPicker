@@ -9,11 +9,11 @@ import UIKit
 
 public class HuePicker: UIView {
     
-    var _h:UInt = 40
-    public var h:UInt {
+    var _h:CGFloat = 0.1111
+    public var h:CGFloat { // [0,1]
         set(value) {
-            _h = max(255, min(0, value))
-            currentPoint = CGPointMake((bounds.width / 255) * CGFloat(_h), 0)
+            _h = max(1, min(0, value))
+            currentPoint = CGPointMake(bounds.width * CGFloat(_h), 0)
             setNeedsDisplay()
         }
         get {
@@ -26,13 +26,12 @@ public class HuePicker: UIView {
     private var handleRect = CGRectZero
     public var handleColor:UIColor = UIColor.blackColor()
     
-    public var onHueChange:((hue:UInt, finished:Bool) -> Void)?
+    public var onHueChange:((hue:CGFloat, finished:Bool) -> Void)?
     
     public func setHueFromColor(color:UIColor) {
         var h:CGFloat = 0
         color.getHue(&h, saturation: nil, brightness: nil, alpha: nil)
-        h *= 255
-        self.h = UInt(h)
+        self.h = h
     }
     
     required public init(coder aDecoder: NSCoder) {
@@ -128,8 +127,7 @@ public class HuePicker: UIView {
         let point = touch.locationInView(self)
         currentPoint = CGPointMake(max(0, min(bounds.width, point.x)) , 0)
         handleRect = CGRectMake(currentPoint.x-3, 0, 6, bounds.height)
-        var fH = (bounds.width / 255) * currentPoint.x
-        _h = UInt(fH)
+        _h = (1/bounds.width) * currentPoint.x
         onHueChange?(hue: h, finished:finished)
         setNeedsDisplay()
     }

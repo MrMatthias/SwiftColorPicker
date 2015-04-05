@@ -9,7 +9,7 @@ import UIKit
 
 public class ColorPickerController: NSObject {
     
-    public var onColorChange:((color:UIColor)->Void)? = nil
+    public var onColorChange:((color:UIColor, finished:Bool)->Void)? = nil
     
     // Hue Picker
     public var huePicker:HuePicker
@@ -43,6 +43,7 @@ public class ColorPickerController: NSObject {
             self.huePicker.setHueFromColor(color)
             self.colorWell.previewColor = (finished) ? nil : color
             if(finished) {self.colorWell.color = color}
+            self.onColorChange?(color: color, finished: finished)
         }
         self.huePicker.onHueChange = {(hue, finished) -> Void in
             self.colorPicker.h = CGFloat(hue)

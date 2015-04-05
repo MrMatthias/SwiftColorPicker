@@ -30,16 +30,20 @@ public class ColorPicker: UIView {
     
     public var onColorChange:((color:UIColor, finished:Bool)->Void)? = nil
     
-    
-    public var a:CGFloat = 1
-    private var _h:CGFloat = 0.3
-    public var h:CGFloat {
+    private var _a:CGFloat = 1 // [0,1]
+    public var a:CGFloat {
         set(value) {
-            if value > 1 {
-                _h = min(1, max(0, value/255))
-            } else {
-                _h = min(1, max(0, value))
-            }
+            _a = max(0,min(1, value))
+        }
+        get {
+            return _a
+        }
+    }
+    private var _h:CGFloat = 0
+    public var h:CGFloat { // // [0,1]
+        set(value) {
+            println("h: \(h)")
+                _h = max(0, min(1, value))
             handleColorChange(pointToColor(currentPoint), changing: false)
             renderBitmap()
         }
@@ -178,7 +182,7 @@ public class ColorPicker: UIView {
         var width = UInt(bounds.width)
         var height = UInt(bounds.height)
         var i = 0
-        var h360:CGFloat = (h * 360) / 60.0
+        var h360:CGFloat = ((h == 1 ? 0 : h) * 360) / 60.0
         var sector:Int = Int(floor(h360))
         var f:CGFloat = h360 - CGFloat(sector)
         var f1:CGFloat = 1.0 - f
@@ -195,11 +199,19 @@ public class ColorPicker: UIView {
         for v in 0..<Int(self.bounds.height) {
             double_v = CGFloat(v) * vd
             for s in 0..<Int(self.bounds.width) {
+                i = (v * Int(width) + s) * 4
+                if s == 0 {
+                    q = double_v * 255
+                    d[i+1] = UInt8(q)
+                    d[i+2] = UInt8(q)
+                    d[i+3] = UInt8(q)
+                    continue
+                }
+                
                 double_s = CGFloat(s) * sd
                 p = double_v * (1.0 - double_s) * 255.0
                 q = double_v * (1.0 - double_s * f) * 255.0
                 t = double_v * ( 1.0 - double_s  * f1) * 255.0
-                i = (v * Int(width) + s) * 4
                 var v255 = double_v * 255
                 switch(sector) {
                 case 0:
