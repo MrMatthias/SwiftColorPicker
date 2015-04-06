@@ -50,6 +50,7 @@ public class ColorPickerController: NSObject {
             let color = self.colorPicker.color
             self.colorWell.previewColor = (finished) ? nil : color
             if(finished) {self.colorWell.color = color}
+            self.onColorChange?(color: color, finished: finished)
         }
     }
     
