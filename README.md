@@ -1,5 +1,5 @@
 # SwiftColorPicker
-Work in progress
+
 ![Swift Color Picker Screenshot](/../assets/screenshot1.png?raw=true)
 
 ##Installation
@@ -11,7 +11,8 @@ Podfile:
 
 ##Usage
 ###Simple Example
-Create a Storyboard with 3 views and set the Classes to *ColorWell*, *ColorPicker* and *HuePicker*. Wire the Outlets with the following code:
+Create a Storyboard with 3 views and set the Classes to *ColorWell* (UIButton), *ColorPicker* (UIView) and *HuePicker* (UIView). Wire the Outlets with the following code:
+
     import SwiftColorPicker
 
     ...
@@ -26,7 +27,7 @@ Create a Storyboard with 3 views and set the Classes to *ColorWell*, *ColorPicke
     pickerController?.color = UIColor.redColor()
 
     // get color:
-    pickerController.color
+    pickerController!.color
 
     // get color updates:
     pickerController?.onColorChange = {(color, finished) in

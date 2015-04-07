@@ -4,10 +4,11 @@ Pod::Spec.new do |s|
   s.summary      = "A Swift HSB Color Picker"
   s.homepage     = "https://github.com/MrMatthias/SwiftColorPicker"
   s.license      = "MIT"
+  s.screenshot   = "https://raw.githubusercontent.com/MrMatthias/SwiftColorPicker/assets/screenshot1.png"
   s.author             = { "Matthias Schlemm" => "matthias@sixpolys.com" }
   s.platform     = :ios
   s.ios.deployment_target = "8.0"
-  s.source       = { :git => "https://github.com/MrMatthias/SwiftColorPicker.git", :tag => "0.0.1" }
+  s.source       = { :git => "https://github.com/MrMatthias/SwiftColorPicker.git", :tag => "0.0.2" }
   s.source_files  = "Source/*.swift"
   s.requires_arc = true
 end
