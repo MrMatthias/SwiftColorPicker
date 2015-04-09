@@ -15,7 +15,12 @@ public class ColorPickerController: NSObject {
     public var huePicker:HuePicker
     
     // Color Well
-    public var colorWell:ColorWell
+    public var colorWell:ColorWell {
+        didSet {
+            huePicker.setHueFromColor(colorWell.color)
+            colorPicker.color =  colorWell.color
+        }
+    }
     
     
     // Color Picker

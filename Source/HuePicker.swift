@@ -12,8 +12,9 @@ public class HuePicker: UIView {
     var _h:CGFloat = 0.1111
     public var h:CGFloat { // [0,1]
         set(value) {
-            _h = max(1, min(0, value))
+            _h = min(1, max(0, value))
             currentPoint = CGPointMake(bounds.width * CGFloat(_h), 0)
+            handleRect = CGRectMake(currentPoint.x-3, 0, 6, bounds.height)
             setNeedsDisplay()
         }
         get {
@@ -152,10 +153,33 @@ public class HuePicker: UIView {
         if let img = image {
             img.drawInRect(rect)
         }
-        
-        var path = UIBezierPath(roundedRect: handleRect, cornerRadius: 3)
-        handleColor.setStroke()
-        path.stroke()
+
+        drawHueDragHandler(frame: handleRect)
     }
+    
+    func drawHueDragHandler(#frame: CGRect) {
+        
+        //// Polygon Drawing
+        var polygonPath = UIBezierPath()
+        polygonPath.moveToPoint(CGPointMake(frame.minX + 4, frame.maxY - 6))
+        polygonPath.addLineToPoint(CGPointMake(frame.minX + 7.46, frame.maxY))
+        polygonPath.addLineToPoint(CGPointMake(frame.minX + 0.54, frame.maxY))
+        polygonPath.closePath()
+        UIColor.blackColor().setFill()
+        polygonPath.fill()
+        
+        
+        //// Polygon 2 Drawing
+        var polygon2Path = UIBezierPath()
+        polygon2Path.moveToPoint(CGPointMake(frame.minX + 4, frame.minY + 6))
+        polygon2Path.addLineToPoint(CGPointMake(frame.minX + 7.46, frame.minY))
+        polygon2Path.addLineToPoint(CGPointMake(frame.minX + 0.54, frame.minY))
+        polygon2Path.closePath()
+        UIColor.whiteColor().setFill()
+        polygon2Path.fill()
+    }
+
+
+
 
 }

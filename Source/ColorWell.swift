@@ -7,30 +7,25 @@
 
 import UIKit
 
-public class ColorWell: UIButton {
+@IBDesignable public class ColorWell: UIButton {
 
-    private var _color:UIColor = UIColor.blueColor()
-    public var color:UIColor {
-        set(value) {
-            _color = value
+    @IBInspectable public var color:UIColor = UIColor.cyanColor() {
+        didSet {
             setNeedsDisplay()
-        }
-        get {
-            return _color
         }
     }
 
-    private var _previewColor:UIColor?
+
     public var previewColor:UIColor? {
-        set(value) {
-            _previewColor = value
+        didSet {
             setNeedsDisplay()
         }
-        get {
-            return _previewColor
+    }
+    @IBInspectable public var borderColor:UIColor = UIColor.darkGrayColor() {
+        didSet {
+            setNeedsDisplay()
         }
     }
-    public var borderColor:UIColor = UIColor.whiteColor()
     
     func commonInit() {
         backgroundColor = UIColor.clearColor()
