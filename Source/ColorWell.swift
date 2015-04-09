@@ -27,6 +27,12 @@ import UIKit
         }
     }
     
+    @IBInspectable public var borderWidth:CGFloat = 2 {
+        didSet{
+            setNeedsDisplay()
+        }
+    }
+    
     func commonInit() {
         backgroundColor = UIColor.clearColor()
         opaque = false
@@ -61,7 +67,7 @@ import UIKit
         }
         
         borderColor.setStroke()
-        ovalPath.lineWidth = 2
+        ovalPath.lineWidth = borderWidth
         ovalPath.stroke()
     }
 
