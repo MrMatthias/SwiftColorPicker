@@ -8,7 +8,7 @@
 import UIKit
 import ImageIO
 
-public class ColorPicker: UIView {
+@IBDesignable public class ColorPicker: UIView {
     
     private class PickerImage {
         var provider:CGDataProvider!
@@ -68,7 +68,7 @@ public class ColorPicker: UIView {
             var alpha:CGFloat = 1
             value.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
             a = alpha
-            if hue != h {
+            if hue != h || pickerImage1 === nil {
                 self.h = hue
             }
             currentPoint = CGPointMake(saturation * bounds.width, brightness * bounds.height)
@@ -279,6 +279,14 @@ public class ColorPicker: UIView {
 
     public override func drawRect(rect: CGRect) {
         
+        #if !TARGET_INTERFACE_BUILDER
+            // this code will run in the app itself
+        #else
+            if pickerImage1 == nil {
+                renderBitmap()
+            }
+        #endif
+        
         if let img = image {
             img.drawInRect(rect)
         }
@@ -299,5 +307,8 @@ public class ColorPicker: UIView {
         
     }
     
+    public override func prepareForInterfaceBuilder() {
+        self.renderBitmap()
+    }
 
 }
