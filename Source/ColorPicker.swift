@@ -92,7 +92,6 @@ import ImageIO
     }
     public override func updateConstraints() {
         super.updateConstraints()
-        println("UPDATE CONTRAINTS \(frame.size)")
     }
     
     func commonInit() {
@@ -149,7 +148,6 @@ import ImageIO
         if self.bounds.isEmpty {
             return
         }
-        //opQueue.cancelAllOperations()
         if !lock.tryLock() {
             rerender = true
             return
@@ -222,7 +220,6 @@ import ImageIO
                 i = (v * width + s) * 4
                 if s == 0 {
                     q = pf
-                    //d = UInt8(q)
                     d[i+1] = UInt8(q)
                     d[i+2] = UInt8(q)
                     d[i+3] = UInt8(q)
