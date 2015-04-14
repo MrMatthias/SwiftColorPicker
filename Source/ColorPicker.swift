@@ -21,6 +21,7 @@ import ImageIO
             self.data = data
         }
     }
+    
     private var pickerImage1:PickerImage?
     private var pickerImage2:PickerImage?
     private var image:UIImage?
@@ -97,6 +98,7 @@ import ImageIO
     func commonInit() {
         userInteractionEnabled = true
         clipsToBounds = false
+        
     }
 
     
@@ -147,7 +149,7 @@ import ImageIO
         if self.bounds.isEmpty {
             return
         }
-        opQueue.cancelAllOperations()
+        //opQueue.cancelAllOperations()
         if !lock.tryLock() {
             rerender = true
             return
@@ -193,12 +195,12 @@ import ImageIO
       
     }
     
-    private func writeColorData(inout d:[UInt8]) {
-        var width = UInt(bounds.width)
+    private func writeColorData(d:UnsafeMutablePointer<UInt8>) {
+        var width = Int(bounds.width)
         width = (width == 0) ? 256 : width
-        var height = UInt(bounds.height)
+        var height = Int(bounds.height)
         height = (height == 0) ? 256 : height
-        var i = 0
+        var i:Int = 0
         var h360:CGFloat = ((h == 1 ? 0 : h) * 360) / 60.0
         var sector:Int = Int(floor(h360))
         var f:CGFloat = h360 - CGFloat(sector)
@@ -209,16 +211,18 @@ import ImageIO
         var sd:CGFloat = 1.0 / bounds.width
         var vd:CGFloat =  1 / bounds.height
         var a:UInt8 = UInt8(self.a * 255)
-        var double_v:CGFloat = 0
         var double_s:CGFloat = 0
-
+        var pf:CGFloat = 0
+        let v_range = 0..<height
+        let s_range = 0..<width
         
-        for v in 0..<Int(self.bounds.height) {
-            double_v = CGFloat(v) * vd
-            for s in 0..<Int(self.bounds.width) {
-                i = (v * Int(width) + s) * 4
+        for v in v_range {
+            pf = 255 * CGFloat(v) * vd
+            for s in s_range {
+                i = (v * width + s) * 4
                 if s == 0 {
-                    q = double_v * 255
+                    q = pf
+                    //d = UInt8(q)
                     d[i+1] = UInt8(q)
                     d[i+2] = UInt8(q)
                     d[i+3] = UInt8(q)
@@ -226,33 +230,33 @@ import ImageIO
                 }
                 
                 double_s = CGFloat(s) * sd
-                p = double_v * (1.0 - double_s) * 255.0
-                q = double_v * (1.0 - double_s * f) * 255.0
-                t = double_v * ( 1.0 - double_s  * f1) * 255.0
-                var v255 = double_v * 255
+                p = pf * (1.0 - double_s)
+                q = pf * (1.0 - double_s * f)
+                t = pf * ( 1.0 - double_s  * f1)
+            
                 switch(sector) {
                 case 0:
-                    d[i+1] = UInt8(v255)
+                    d[i+1] = UInt8(pf)
                     d[i+2] = UInt8(t)
                     d[i+3] = UInt8(p)
                 case 1:
                     d[i+1] = UInt8(q)
-                    d[i+2] = UInt8(v255)
+                    d[i+2] = UInt8(pf)
                     d[i+3] = UInt8(p)
                 case 2:
                     d[i+1] = UInt8(p)
-                    d[i+2] = UInt8(v255)
+                    d[i+2] = UInt8(pf)
                     d[i+3] = UInt8(t)
                 case 3:
                     d[i+1] = UInt8(p)
                     d[i+2] = UInt8(q)
-                    d[i+3] = UInt8(v255)
+                    d[i+3] = UInt8(pf)
                 case 4:
                     d[i+1] = UInt8(t)
                     d[i+2] = UInt8(p)
-                    d[i+3] = UInt8(v255)
+                    d[i+3] = UInt8(pf)
                 default:
-                    d[i+1] = UInt8(v255)
+                    d[i+1] = UInt8(pf)
                     d[i+2] = UInt8(p)
                     d[i+3] = UInt8(q)
                 }
