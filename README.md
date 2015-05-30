@@ -38,6 +38,8 @@ Create a Storyboard with 3 views and set the Classes to *ColorWell* (UIButton), 
         }
     }
 
+##Show case
+https://itunes.apple.com/us/app/binary-clock-widget/id965640631
 
 ##License
 MIT-License
