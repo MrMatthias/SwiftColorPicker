@@ -8,20 +8,8 @@
 import UIKit
 import ImageIO
 
-@IBDesignable public class ColorPicker: UIView {
-    
-    private class PickerImage {
-        var provider:CGDataProvider!
-        var imageSource:CGImageSource?
-        var dataRef:CFDataRef?
-        var image:UIImage?
-        var data:[UInt8]
-        
-        init(data:[UInt8]) {
-            self.data = data
-        }
-    }
-    
+public class ColorPicker: UIView {
+
     private var pickerImage1:PickerImage?
     private var pickerImage2:PickerImage?
     private var image:UIImage?
@@ -80,7 +68,6 @@ import ImageIO
         }
     }
  
-    
     public override init(frame: CGRect) {
         super.init(frame: frame)
         commonInit()
@@ -90,16 +77,31 @@ import ImageIO
         super.init(coder: aDecoder)
         commonInit()
     }
-    public override func updateConstraints() {
-        super.updateConstraints()
-    }
     
     func commonInit() {
         userInteractionEnabled = true
         clipsToBounds = false
-        
+        self.addObserver(self, forKeyPath: "bounds", options: NSKeyValueObservingOptions.New | NSKeyValueObservingOptions.Initial, context: nil)
+    }
+    
+    deinit {
+        self.removeObserver(self, forKeyPath: "bounds")
     }
 
+    public override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
+        if keyPath == "bounds" {
+            if let pImage1 = pickerImage1 {
+                pImage1.changeSize(Int(self.bounds.width), height: Int(self.bounds.height))
+            }
+            if let pImage2 = pickerImage2 {
+                pImage2.changeSize(Int(self.bounds.width), height: Int(self.bounds.height))
+            }
+            renderBitmap()
+            self.setNeedsDisplay()
+        } else {
+            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+        }
+    }
     
     public override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
         let touch = touches.first as! UITouch
@@ -153,27 +155,16 @@ import ImageIO
             return
         }
         rerender = false
-        var width = UInt(self.bounds.width)
-        width = (width == 0) ? 256 : width
-        var height = UInt(self.bounds.height)
-        height = (height == 0) ? 256 : height
         
-        // initialize data stores
-        if  self.pickerImage1 == nil {
-            self.pickerImage1 = PickerImage(data:[UInt8](count: Int(width * height) * Int(4), repeatedValue: UInt8(255)))
-            self.pickerImage2 = PickerImage(data:[UInt8](count: Int(width * height) * Int(4), repeatedValue: UInt8(255)))
+        if pickerImage1 == nil {
+            self.pickerImage1 = PickerImage(width: Int(bounds.width), height: Int(bounds.height))
+            self.pickerImage2 = PickerImage(width: Int(bounds.width), height: Int(bounds.height))
         }
         
-        // create images
-        if !self.data1Shown && self.pickerImage1!.image == nil {
-            self.dataToPickerImage(self.pickerImage1!.data, pickerImage: &self.pickerImage1!, width: width, height: height)
-            self.dataToPickerImage(self.pickerImage2!.data, pickerImage: &self.pickerImage2!, width: width, height: height)
-        }
-
         opQueue.addOperationWithBlock { () -> Void in
             // Write colors to data array
-            if self.data1Shown { self.writeColorData(&(self.pickerImage2!.data)) }
-            else { self.writeColorData(&(self.pickerImage1!.data))}
+            if self.data1Shown { self.pickerImage2!.writeColorData(self.h, a:self.a) }
+            else { self.pickerImage1!.writeColorData(self.h, a:self.a)}
             
             
             // flip images
@@ -193,101 +184,9 @@ import ImageIO
       
     }
     
-    private func writeColorData(d:UnsafeMutablePointer<UInt8>) {
-        var width = Int(bounds.width)
-        width = (width == 0) ? 256 : width
-        var height = Int(bounds.height)
-        height = (height == 0) ? 256 : height
-        var i:Int = 0
-        var h360:CGFloat = ((h == 1 ? 0 : h) * 360) / 60.0
-        var sector:Int = Int(floor(h360))
-        var f:CGFloat = h360 - CGFloat(sector)
-        var f1:CGFloat = 1.0 - f
-        var p:CGFloat = 0.0
-        var q:CGFloat = 0.0
-        var t:CGFloat = 0.0
-        var sd:CGFloat = 1.0 / bounds.width
-        var vd:CGFloat =  1 / bounds.height
-        var a:UInt8 = UInt8(self.a * 255)
-        var double_s:CGFloat = 0
-        var pf:CGFloat = 0
-        let v_range = 0..<height
-        let s_range = 0..<width
-        
-        for v in v_range {
-            pf = 255 * CGFloat(v) * vd
-            for s in s_range {
-                i = (v * width + s) * 4
-                if s == 0 {
-                    q = pf
-                    d[i+1] = UInt8(q)
-                    d[i+2] = UInt8(q)
-                    d[i+3] = UInt8(q)
-                    continue
-                }
-                
-                double_s = CGFloat(s) * sd
-                p = pf * (1.0 - double_s)
-                q = pf * (1.0 - double_s * f)
-                t = pf * ( 1.0 - double_s  * f1)
-            
-                switch(sector) {
-                case 0:
-                    d[i+1] = UInt8(pf)
-                    d[i+2] = UInt8(t)
-                    d[i+3] = UInt8(p)
-                case 1:
-                    d[i+1] = UInt8(q)
-                    d[i+2] = UInt8(pf)
-                    d[i+3] = UInt8(p)
-                case 2:
-                    d[i+1] = UInt8(p)
-                    d[i+2] = UInt8(pf)
-                    d[i+3] = UInt8(t)
-                case 3:
-                    d[i+1] = UInt8(p)
-                    d[i+2] = UInt8(q)
-                    d[i+3] = UInt8(pf)
-                case 4:
-                    d[i+1] = UInt8(t)
-                    d[i+2] = UInt8(p)
-                    d[i+3] = UInt8(pf)
-                default:
-                    d[i+1] = UInt8(pf)
-                    d[i+2] = UInt8(p)
-                    d[i+3] = UInt8(q)
-                }
-                
-                
-            }
-        }
-    }
-    
-    private func dataToPickerImage(d:[UInt8],  inout pickerImage:PickerImage, width:UInt, height:UInt) {
-        let colorSpace = CGColorSpaceCreateDeviceRGB()
-        let bitmapInfo = CGBitmapInfo(CGImageAlphaInfo.PremultipliedFirst.rawValue)
-        
-        pickerImage.dataRef = CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, d, d.count as CFIndex, kCFAllocatorDefault)
-        
-        pickerImage.provider = CGDataProviderCreateWithCFData(pickerImage.dataRef)
-        
-        pickerImage.imageSource = CGImageSourceCreateWithDataProvider(pickerImage.provider, nil)
-        
-        var cgimg = CGImageCreate(Int(width), Int(height), Int(8), Int(32), Int(width) * Int(4),
-            colorSpace, bitmapInfo, pickerImage.provider!, nil as  UnsafePointer<CGFloat>, true, kCGRenderingIntentDefault)
-        pickerImage.image = UIImage(CGImage: cgimg)
-    }
+
 
     public override func drawRect(rect: CGRect) {
-        
-        #if !TARGET_INTERFACE_BUILDER
-            // this code will run in the app itself
-        #else
-            if pickerImage1 == nil {
-                renderBitmap()
-            }
-        #endif
-        
         if let img = image {
             img.drawInRect(rect)
         }
@@ -298,18 +197,11 @@ import ImageIO
         ovalPath.lineWidth = 1
         ovalPath.stroke()
         
-        
         //// Oval 2 Drawing
         var oval2Path = UIBezierPath(ovalInRect: CGRectMake(currentPoint.x - 4, currentPoint.y - 4, 8, 8))
         UIColor.blackColor().setStroke()
         oval2Path.lineWidth = 1
         oval2Path.stroke()
-        
-        
-    }
-    
-    public override func prepareForInterfaceBuilder() {
-        self.renderBitmap()
     }
 
 }
