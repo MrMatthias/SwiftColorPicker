@@ -19,12 +19,14 @@ public class PickerImage {
     
     private func createImageFromData(width:Int, height:Int) {
         let colorSpace = CGColorSpaceCreateDeviceRGB()
-        let bitmapInfo = CGBitmapInfo(CGImageAlphaInfo.PremultipliedFirst.rawValue)
+        let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.PremultipliedFirst.rawValue)
         provider = CGDataProviderCreateWithCFData(mutableData)
         imageSource = CGImageSourceCreateWithDataProvider(provider, nil)
-        var cgimg = CGImageCreate(Int(width), Int(height), Int(8), Int(32), Int(width) * Int(4),
-            colorSpace, bitmapInfo, provider!, nil as  UnsafePointer<CGFloat>, true, kCGRenderingIntentDefault)
-        image = UIImage(CGImage: cgimg)
+        let cgimg = CGImageCreate(Int(width), Int(height), Int(8), Int(32), Int(width) * Int(4),
+            colorSpace, bitmapInfo, provider!, nil as  UnsafePointer<CGFloat>, true, .RenderingIntentDefault)
+        if let cgimg = cgimg {
+            image = UIImage(CGImage: cgimg)
+        }
     }
     
     func changeSize(width:Int, height:Int) {
@@ -52,16 +54,16 @@ public class PickerImage {
         }
 
         var i:Int = 0
-        var h360:CGFloat = ((h == 1 ? 0 : h) * 360) / 60.0
-        var sector:Int = Int(floor(h360))
-        var f:CGFloat = h360 - CGFloat(sector)
-        var f1:CGFloat = 1.0 - f
+        let h360:CGFloat = ((h == 1 ? 0 : h) * 360) / 60.0
+        let sector:Int = Int(floor(h360))
+        let f:CGFloat = h360 - CGFloat(sector)
+        let f1:CGFloat = 1.0 - f
         var p:CGFloat = 0.0
         var q:CGFloat = 0.0
         var t:CGFloat = 0.0
-        var sd:CGFloat = 1.0 / CGFloat(width)
-        var vd:CGFloat =  1 / CGFloat(height)
-        var a:UInt8 = UInt8(a * 255)
+        let sd:CGFloat = 1.0 / CGFloat(width)
+        let vd:CGFloat =  1 / CGFloat(height)
+//        let a:UInt8 = UInt8(a * 255) // unused
         var double_s:CGFloat = 0
         var pf:CGFloat = 0
         let v_range = 0..<height
