@@ -35,8 +35,8 @@ public class HuePicker: UIView {
         self.h = h
     }
     
-    required public init(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)!
+    required public init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
         userInteractionEnabled = true
     }
     
@@ -58,7 +58,7 @@ public class HuePicker: UIView {
         var t = 0.0
 
         var i = 0
-//        var a:UInt8 = 255 // unused
+        //_ = 255
         var double_v:Double = 0
         var double_s:Double = 0
         let widthRatio:Double = 360 / Double(bounds.width)
@@ -117,11 +117,10 @@ public class HuePicker: UIView {
 
         let provider = CGDataProviderCreateWithCFData(NSData(bytes: &d, length: d.count * sizeof(UInt8)))
         let cgimg = CGImageCreate(Int(width), Int(height), 8, 32, Int(width) * Int(sizeof(UInt8) * 4),
-            colorSpace, bitmapInfo, provider, nil, true, .RenderingIntentDefault)
+            colorSpace, bitmapInfo, provider, nil, true, CGColorRenderingIntent.RenderingIntentDefault)
         
-        if let cgimg = cgimg {
-            image = UIImage(CGImage: cgimg)
-        }
+        
+        image = UIImage(CGImage: cgimg!)
         
     }
     
@@ -135,21 +134,15 @@ public class HuePicker: UIView {
     }
     
     override public func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        if let touch = touches.first {
-            handleTouch(touch, finished: false)
-        }
+        handleTouch(touches.first! as UITouch, finished: false)
     }
     
     override public func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        if let touch = touches.first {
-            handleTouch(touch, finished: false)
-        }
+        handleTouch(touches.first! as UITouch, finished: false)
     }
     
     override public func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        if let touch = touches.first {
-            handleTouch(touch, finished: true)
-        }
+        handleTouch(touches.first! as UITouch, finished: true)
     }
     
     

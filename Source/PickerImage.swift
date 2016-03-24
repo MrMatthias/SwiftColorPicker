@@ -23,10 +23,8 @@ public class PickerImage {
         provider = CGDataProviderCreateWithCFData(mutableData)
         imageSource = CGImageSourceCreateWithDataProvider(provider, nil)
         let cgimg = CGImageCreate(Int(width), Int(height), Int(8), Int(32), Int(width) * Int(4),
-            colorSpace, bitmapInfo, provider!, nil as  UnsafePointer<CGFloat>, true, .RenderingIntentDefault)
-        if let cgimg = cgimg {
-            image = UIImage(CGImage: cgimg)
-        }
+            colorSpace, bitmapInfo, provider!, nil as  UnsafePointer<CGFloat>, true, CGColorRenderingIntent.RenderingIntentDefault)
+        image = UIImage(CGImage: cgimg!)
     }
     
     func changeSize(width:Int, height:Int) {
@@ -63,7 +61,7 @@ public class PickerImage {
         var t:CGFloat = 0.0
         let sd:CGFloat = 1.0 / CGFloat(width)
         let vd:CGFloat =  1 / CGFloat(height)
-//        let a:UInt8 = UInt8(a * 255) // unused
+        
         var double_s:CGFloat = 0
         var pf:CGFloat = 0
         let v_range = 0..<height

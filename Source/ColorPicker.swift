@@ -73,23 +73,22 @@ public class ColorPicker: UIView {
         commonInit()
     }
 
-    public required init(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)!
+    public required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
         commonInit()
     }
     
     func commonInit() {
         userInteractionEnabled = true
         clipsToBounds = false
-        self.addObserver(self, forKeyPath: "bounds", options: NSKeyValueObservingOptions(rawValue: NSKeyValueObservingOptions.Initial.rawValue | NSKeyValueObservingOptions.New.rawValue), context: nil)
-//        self.addObserver(self, forKeyPath: "bounds", options: NSKeyValueObservingOptions.New | NSKeyValueObservingOptions.Initial, context: nil)
+        self.addObserver(self, forKeyPath: "bounds", options: [NSKeyValueObservingOptions.New, NSKeyValueObservingOptions.Initial], context: nil)
     }
     
     deinit {
         self.removeObserver(self, forKeyPath: "bounds")
     }
 
-    override public func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
+    public override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
         if keyPath == "bounds" {
             if let pImage1 = pickerImage1 {
                 pImage1.changeSize(Int(self.bounds.width), height: Int(self.bounds.height))
@@ -105,21 +104,18 @@ public class ColorPicker: UIView {
     }
     
     public override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        if let touch = touches.first {
-            handleTouche(touch, ended: false)
-        }
+        let touch = touches.first! as UITouch
+        handleTouche(touch, ended: false)
     }
     
     public override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        if let touch = touches.first {
-            handleTouche(touch, ended: false)
-        }
+        let touch = touches.first! as UITouch
+        handleTouche(touch, ended: false)
     }
     
     public override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        if let touch = touches.first {
-            handleTouche(touch, ended: true)
-        }
+        let touch = touches.first! as UITouch
+        handleTouche(touch, ended: true)
     }
     
     private func handleColorChange(color:UIColor, changing:Bool) {
