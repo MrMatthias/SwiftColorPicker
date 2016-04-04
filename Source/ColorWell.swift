@@ -44,8 +44,8 @@ import UIKit
         commonInit()
     }
     
-    required public init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
+    public required init?(coder aDecoder: NSCoder) {
+            super.init(coder: aDecoder)
         commonInit()
     }
 
