@@ -9,25 +9,25 @@
 import UIKit
 import ImageIO
 
-public class PickerImage {
+open class PickerImage {
     var provider:CGDataProvider!
     var imageSource:CGImageSource?
     var image:UIImage?
-    var mutableData:CFMutableDataRef
+    var mutableData:CFMutableData
     var width:Int
     var height:Int
     
-    private func createImageFromData(width:Int, height:Int) {
+    fileprivate func createImageFromData(_ width:Int, height:Int) {
         let colorSpace = CGColorSpaceCreateDeviceRGB()
-        let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.PremultipliedFirst.rawValue)
-        provider = CGDataProviderCreateWithCFData(mutableData)
+        let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedFirst.rawValue)
+        provider = CGDataProvider(data: mutableData)
         imageSource = CGImageSourceCreateWithDataProvider(provider, nil)
-        let cgimg = CGImageCreate(Int(width), Int(height), Int(8), Int(32), Int(width) * Int(4),
-            colorSpace, bitmapInfo, provider!, nil as  UnsafePointer<CGFloat>, true, CGColorRenderingIntent.RenderingIntentDefault)
-        image = UIImage(CGImage: cgimg!)
+        let cgimg = CGImage(width: Int(width), height: Int(height), bitsPerComponent: Int(8), bitsPerPixel: Int(32), bytesPerRow: Int(width) * Int(4),
+            space: colorSpace, bitmapInfo: bitmapInfo, provider: provider!, decode: nil, shouldInterpolate: true, intent: CGColorRenderingIntent.defaultIntent)
+        image = UIImage(cgImage: cgimg!)
     }
     
-    func changeSize(width:Int, height:Int) {
+    func changeSize(_ width:Int, height:Int) {
         self.width = width
         self.height = height
         let size:Int = width * height * 4
@@ -43,7 +43,7 @@ public class PickerImage {
         createImageFromData(width, height: height)
     }
     
-    public func writeColorData(h:CGFloat, a:CGFloat) {
+    open func writeColorData(_ h:CGFloat, a:CGFloat) {
 
         let d = CFDataGetMutableBytePtr(self.mutableData)
         
@@ -71,12 +71,12 @@ public class PickerImage {
             pf = 255 * CGFloat(v) * vd
             for s in s_range {
                 i = (v * width + s) * 4
-                d[i] = UInt8(255)
+                d?[i] = UInt8(255)
                 if s == 0 {
                     q = pf
-                    d[i+1] = UInt8(q)
-                    d[i+2] = UInt8(q)
-                    d[i+3] = UInt8(q)
+                    d?[i+1] = UInt8(q)
+                    d?[i+2] = UInt8(q)
+                    d?[i+3] = UInt8(q)
                     continue
                 }
                 
@@ -86,29 +86,29 @@ public class PickerImage {
                 t = pf * ( 1.0 - double_s  * f1)
                 switch(sector) {
                 case 0:
-                    d[i+1] = UInt8(pf)
-                    d[i+2] = UInt8(t)
-                    d[i+3] = UInt8(p)
+                    d?[i+1] = UInt8(pf)
+                    d?[i+2] = UInt8(t)
+                    d?[i+3] = UInt8(p)
                 case 1:
-                    d[i+1] = UInt8(q)
-                    d[i+2] = UInt8(pf)
-                    d[i+3] = UInt8(p)
+                    d?[i+1] = UInt8(q)
+                    d?[i+2] = UInt8(pf)
+                    d?[i+3] = UInt8(p)
                 case 2:
-                    d[i+1] = UInt8(p)
-                    d[i+2] = UInt8(pf)
-                    d[i+3] = UInt8(t)
+                    d?[i+1] = UInt8(p)
+                    d?[i+2] = UInt8(pf)
+                    d?[i+3] = UInt8(t)
                 case 3:
-                    d[i+1] = UInt8(p)
-                    d[i+2] = UInt8(q)
-                    d[i+3] = UInt8(pf)
+                    d?[i+1] = UInt8(p)
+                    d?[i+2] = UInt8(q)
+                    d?[i+3] = UInt8(pf)
                 case 4:
-                    d[i+1] = UInt8(t)
-                    d[i+2] = UInt8(p)
-                    d[i+3] = UInt8(pf)
+                    d?[i+1] = UInt8(t)
+                    d?[i+2] = UInt8(p)
+                    d?[i+3] = UInt8(pf)
                 default:
-                    d[i+1] = UInt8(pf)
-                    d[i+2] = UInt8(p)
-                    d[i+3] = UInt8(q)
+                    d?[i+1] = UInt8(pf)
+                    d?[i+2] = UInt8(p)
+                    d?[i+3] = UInt8(q)
                 }
                 
                 

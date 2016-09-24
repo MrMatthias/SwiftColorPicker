@@ -7,35 +7,35 @@
 
 import UIKit
 
-@IBDesignable public class ColorWell: UIButton {
+@IBDesignable open class ColorWell: UIButton {
 
-    @IBInspectable public var color:UIColor = UIColor.cyanColor() {
+    @IBInspectable open var color:UIColor = UIColor.cyan {
         didSet {
             setNeedsDisplay()
         }
     }
 
 
-    public var previewColor:UIColor? {
+    open var previewColor:UIColor? {
         didSet {
             setNeedsDisplay()
         }
     }
-    @IBInspectable public var borderColor:UIColor = UIColor.darkGrayColor() {
+    @IBInspectable open var borderColor:UIColor = UIColor.darkGray {
         didSet {
             setNeedsDisplay()
         }
     }
     
-    @IBInspectable public var borderWidth:CGFloat = 2 {
+    @IBInspectable open var borderWidth:CGFloat = 2 {
         didSet{
             setNeedsDisplay()
         }
     }
     
     func commonInit() {
-        backgroundColor = UIColor.clearColor()
-        opaque = false
+        backgroundColor = UIColor.clear
+        isOpaque = false
     }
     
     
@@ -49,18 +49,18 @@ import UIKit
         commonInit()
     }
 
-    override public func drawRect(rect: CGRect) {
-        let ovalPath = UIBezierPath(ovalInRect: CGRectMake(5.5, 5.5, 35, 35))
+    override open func draw(_ rect: CGRect) {
+        let ovalPath = UIBezierPath(ovalIn: CGRect(x: 5.5, y: 5.5, width: 35, height: 35))
         color.setFill()
         ovalPath.fill()
 
         
         if let col = previewColor {
-            let ovalRect = CGRectMake(5.5, 5.5, 35, 35)
+            let ovalRect = CGRect(x: 5.5, y: 5.5, width: 35, height: 35)
             let ovalPath = UIBezierPath()
-            ovalPath.addArcWithCenter(CGPointMake(ovalRect.midX, ovalRect.midY), radius: ovalRect.width / 2, startAngle: -90 * CGFloat(M_PI)/180, endAngle: 90 * CGFloat(M_PI)/180, clockwise: true)
-            ovalPath.addLineToPoint(CGPointMake(ovalRect.midX, ovalRect.midY))
-            ovalPath.closePath()
+            ovalPath.addArc(withCenter: CGPoint(x: ovalRect.midX, y: ovalRect.midY), radius: ovalRect.width / 2, startAngle: -90 * CGFloat(M_PI)/180, endAngle: 90 * CGFloat(M_PI)/180, clockwise: true)
+            ovalPath.addLine(to: CGPoint(x: ovalRect.midX, y: ovalRect.midY))
+            ovalPath.close()
             
             col.setFill()
             ovalPath.fill()
