@@ -134,7 +134,7 @@ open class ColorPicker: UIView {
             currentPoint = point
         } else {
             let x:CGFloat = min(bounds.width, max(0, point.x))
-            let y:CGFloat = min(bounds.width, max(0, point.y))
+            let y:CGFloat = min(bounds.height, max(0, point.y))
             currentPoint = CGPoint(x: x, y: y)
         }
         handleColorChange(pointToColor(point), changing: !ended)
