@@ -7,15 +7,15 @@
 
 import UIKit
 
-public class ColorPickerController: NSObject {
+open class ColorPickerController: NSObject {
     
-    public var onColorChange:((color:UIColor, finished:Bool)->Void)? = nil
+    open var onColorChange:((_ color:UIColor, _ finished:Bool)->Void)? = nil
     
     // Hue Picker
-    public var huePicker:HuePicker
+    open var huePicker:HuePicker
     
     // Color Well
-    public var colorWell:ColorWell {
+    open var colorWell:ColorWell {
         didSet {
             huePicker.setHueFromColor(colorWell.color)
             colorPicker.color =  colorWell.color
@@ -24,9 +24,9 @@ public class ColorPickerController: NSObject {
     
     
     // Color Picker
-    public var colorPicker:ColorPicker
+    open var colorPicker:ColorPicker
     
-    public var color:UIColor? {
+    open var color:UIColor? {
         set(value) {
             colorPicker.color = value!
             colorWell.color = value!
@@ -48,14 +48,14 @@ public class ColorPickerController: NSObject {
             self.huePicker.setHueFromColor(color)
             self.colorWell.previewColor = (finished) ? nil : color
             if(finished) {self.colorWell.color = color}
-            self.onColorChange?(color: color, finished: finished)
+            self.onColorChange?(color, finished)
         }
         self.huePicker.onHueChange = {(hue, finished) -> Void in
             self.colorPicker.h = CGFloat(hue)
             let color = self.colorPicker.color
             self.colorWell.previewColor = (finished) ? nil : color
             if(finished) {self.colorWell.color = color}
-            self.onColorChange?(color: color, finished: finished)
+            self.onColorChange?(color, finished)
         }
     }
     

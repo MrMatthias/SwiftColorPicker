@@ -7,14 +7,14 @@
 
 import UIKit
 
-public class HuePicker: UIView {
+open class HuePicker: UIView {
     
     var _h:CGFloat = 0.1111
-    public var h:CGFloat { // [0,1]
+    open var h:CGFloat { // [0,1]
         set(value) {
             _h = min(1, max(0, value))
-            currentPoint = CGPointMake(bounds.width * CGFloat(_h), 0)
-            handleRect = CGRectMake(currentPoint.x-3, 0, 6, bounds.height)
+            currentPoint = CGPoint(x: bounds.width * CGFloat(_h), y: 0)
+            handleRect = CGRect(x: currentPoint.x-3, y: 0, width: 6, height: bounds.height)
             setNeedsDisplay()
         }
         get {
@@ -22,22 +22,23 @@ public class HuePicker: UIView {
         }
     }
     var image:UIImage?
-    private var data:[UInt8]?
-    private var currentPoint = CGPointZero
-    private var handleRect = CGRectZero
-    public var handleColor:UIColor = UIColor.blackColor()
+    fileprivate var data:[UInt8]?
+    fileprivate var currentPoint = CGPoint.zero
+    fileprivate var handleRect = CGRect.zero
+    open var handleColor:UIColor = UIColor.black
     
-    public var onHueChange:((hue:CGFloat, finished:Bool) -> Void)?
+    open var onHueChange:((_ hue:CGFloat, _ finished:Bool) -> Void)?
     
-    public func setHueFromColor(color:UIColor) {
+    open func setHueFromColor(_ color:UIColor) {
         var h:CGFloat = 0
         color.getHue(&h, saturation: nil, brightness: nil, alpha: nil)
         self.h = h
     }
     
-    required public init(coder aDecoder: NSCoder) {
+
+    public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        userInteractionEnabled = true
+        isUserInteractionEnabled = true
     }
     
     
@@ -46,11 +47,11 @@ public class HuePicker: UIView {
             return
         }
         
-        var width = UInt(bounds.width)
-        var height = UInt(bounds.height)
+        let width = UInt(bounds.width)
+        let height = UInt(bounds.height)
         
         if  data == nil {
-            data = [UInt8](count: Int(width * height) * 4, repeatedValue: UInt8(255))
+            data = [UInt8](repeating: UInt8(255), count: Int(width * height) * 4)
         }
 
         var p = 0.0
@@ -58,22 +59,22 @@ public class HuePicker: UIView {
         var t = 0.0
 
         var i = 0
-        var a:UInt8 = 255
+        //_ = 255
         var double_v:Double = 0
         var double_s:Double = 0
-        var widthRatio:Double = 360 / Double(bounds.width)
+        let widthRatio:Double = 360 / Double(bounds.width)
         var d = data!
         for hi in 0..<Int(bounds.width) {
-            var double_h:Double = widthRatio * Double(hi) / 60
-            var sector:Int = Int(floor(double_h))
-            var f:Double = double_h - Double(sector)
-            var f1:Double = 1.0 - f
+            let double_h:Double = widthRatio * Double(hi) / 60
+            let sector:Int = Int(floor(double_h))
+            let f:Double = double_h - Double(sector)
+            let f1:Double = 1.0 - f
             double_v = Double(1)
             double_s = Double(1)
             p = double_v * (1.0 - double_s) * 255
             q = double_v * (1.0 - double_s * f) * 255
             t = double_v * ( 1.0 - double_s  * f1) * 255
-            var v255 = double_v * 255
+            let v255 = double_v * 255
             i = hi * 4
             switch(sector) {
             case 0:
@@ -113,69 +114,69 @@ public class HuePicker: UIView {
             }
         }
         let colorSpace = CGColorSpaceCreateDeviceRGB()
-        let bitmapInfo = CGBitmapInfo(CGImageAlphaInfo.PremultipliedFirst.rawValue)
+        let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedFirst.rawValue)
 
-        let provider = CGDataProviderCreateWithCFData(NSData(bytes: &d, length: d.count * sizeof(UInt8)))
-        var cgimg = CGImageCreate(Int(width), Int(height), 8, 32, Int(width) * Int(sizeof(UInt8) * 4),
-            colorSpace, bitmapInfo, provider, nil, true, kCGRenderingIntentDefault)
+        let provider = CGDataProvider(data: Data(bytes: d, count: d.count * MemoryLayout<UInt8>.size) as CFData)
+        let cgimg = CGImage(width: Int(width), height: Int(height), bitsPerComponent: 8, bitsPerPixel: 32, bytesPerRow: Int(width) * Int(MemoryLayout<UInt8>.size * 4),
+            space: colorSpace, bitmapInfo: bitmapInfo, provider: provider!, decode: nil, shouldInterpolate: true, intent: CGColorRenderingIntent.defaultIntent)
         
         
-        image = UIImage(CGImage: cgimg)
+        image = UIImage(cgImage: cgimg!)
         
     }
     
-    private func handleTouch(touch:UITouch, finished:Bool) {
-        let point = touch.locationInView(self)
-        currentPoint = CGPointMake(max(0, min(bounds.width, point.x)) , 0)
-        handleRect = CGRectMake(currentPoint.x-3, 0, 6, bounds.height)
+    fileprivate func handleTouch(_ touch:UITouch, finished:Bool) {
+        let point = touch.location(in: self)
+        currentPoint = CGPoint(x: max(0, min(bounds.width, point.x)) , y: 0)
+        handleRect = CGRect(x: currentPoint.x-3, y: 0, width: 6, height: bounds.height)
         _h = (1/bounds.width) * currentPoint.x
-        onHueChange?(hue: h, finished:finished)
+        onHueChange?(h, finished)
         setNeedsDisplay()
     }
     
-    override public func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
-        handleTouch(touches.first as! UITouch, finished: false)
+    override open func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        handleTouch(touches.first! as UITouch, finished: false)
     }
     
-    override public func touchesMoved(touches: Set<NSObject>, withEvent event: UIEvent) {
-        handleTouch(touches.first as! UITouch, finished: false)
+    override open func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        handleTouch(touches.first! as UITouch, finished: false)
     }
     
-    override public func touchesEnded(touches: Set<NSObject>, withEvent event: UIEvent) {
-        handleTouch(touches.first as! UITouch, finished: true)
+    override open func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        handleTouch(touches.first! as UITouch, finished: true)
     }
     
     
-    override public func drawRect(rect: CGRect) {
+    override open func draw(_ rect: CGRect) {
         if image == nil {
             renderBitmap()
         }
         if let img = image {
-            img.drawInRect(rect)
+            img.draw(in: rect)
         }
 
         drawHueDragHandler(frame: handleRect)
     }
     
-    func drawHueDragHandler(#frame: CGRect) {
+    func drawHueDragHandler(frame: CGRect) {
         
         //// Polygon Drawing
-        var polygonPath = UIBezierPath()
-        polygonPath.moveToPoint(CGPointMake(frame.minX + 4, frame.maxY - 6))
-        polygonPath.addLineToPoint(CGPointMake(frame.minX + 7.46, frame.maxY))
-        polygonPath.addLineToPoint(CGPointMake(frame.minX + 0.54, frame.maxY))
-        polygonPath.closePath()
-        UIColor.blackColor().setFill()
+        let polygonPath = UIBezierPath()
+        polygonPath.move(to: CGPoint(x: frame.minX + 4, y: frame.maxY - 6))
+        polygonPath.addLine(to: CGPoint(x: frame.minX + 7.46, y: frame.maxY))
+        polygonPath.addLine(to: CGPoint(x: frame.minX + 0.54, y: frame.maxY))
+        polygonPath.close()
+        UIColor.black.setFill()
         polygonPath.fill()
         
         
         //// Polygon 2 Drawing
-        var polygon2Path = UIBezierPath()
-        polygon2Path.moveToPoint(CGPointMake(frame.minX + 4, frame.minY + 6))
-        polygon2Path.addLineToPoint(CGPointMake(frame.minX + 7.46, frame.minY))
-        polygon2Path.addLineToPoint(CGPointMake(frame.minX + 0.54, frame.minY))
-        polygon2Path.closePath()
-        UIColor.whiteColor().setFill()
+        let polygon2Path = UIBezierPath()
+        polygon2Path.move(to: CGPoint(x: frame.minX + 4, y: frame.minY + 6))
+        polygon2Path.addLine(to: CGPoint(x: frame.minX + 7.46, y: frame.minY))
+        polygon2Path.addLine(to: CGPoint(x: frame.minX + 0.54, y: frame.minY))
+        polygon2Path.close()
+        UIColor.white.setFill()
         polygon2Path.fill()
     }
 
