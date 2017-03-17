@@ -13,10 +13,11 @@
 		39DD5B071B0235C700BED513 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 39DD5B061B0235C700BED513 /* Images.xcassets */; };
 		39DD5B0A1B0235C700BED513 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 39DD5B081B0235C700BED513 /* LaunchScreen.xib */; };
 		39DD5B161B0235C700BED513 /* ExampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39DD5B151B0235C700BED513 /* ExampleTests.swift */; };
-		39DD5B2C1B023C8000BED513 /* ColorPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39DD5B281B023C8000BED513 /* ColorPicker.swift */; };
-		39DD5B2D1B023C8000BED513 /* ColorPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39DD5B291B023C8000BED513 /* ColorPickerController.swift */; };
-		39DD5B2E1B023C8000BED513 /* ColorWell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39DD5B2A1B023C8000BED513 /* ColorWell.swift */; };
-		39DD5B2F1B023C8000BED513 /* HuePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39DD5B2B1B023C8000BED513 /* HuePicker.swift */; };
+		401E05341E747C3F00FC4AEE /* ColorPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401E052F1E747C3F00FC4AEE /* ColorPicker.swift */; };
+		401E05351E747C3F00FC4AEE /* ColorPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401E05301E747C3F00FC4AEE /* ColorPickerController.swift */; };
+		401E05361E747C3F00FC4AEE /* ColorWell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401E05311E747C3F00FC4AEE /* ColorWell.swift */; };
+		401E05371E747C3F00FC4AEE /* HuePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401E05321E747C3F00FC4AEE /* HuePicker.swift */; };
+		401E05381E747C3F00FC4AEE /* PickerImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401E05331E747C3F00FC4AEE /* PickerImage.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,10 +41,11 @@
 		39DD5B0F1B0235C700BED513 /* ExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		39DD5B141B0235C700BED513 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		39DD5B151B0235C700BED513 /* ExampleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleTests.swift; sourceTree = "<group>"; };
-		39DD5B281B023C8000BED513 /* ColorPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ColorPicker.swift; path = ../../../Source/ColorPicker.swift; sourceTree = "<group>"; };
-		39DD5B291B023C8000BED513 /* ColorPickerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ColorPickerController.swift; path = ../../../Source/ColorPickerController.swift; sourceTree = "<group>"; };
-		39DD5B2A1B023C8000BED513 /* ColorWell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ColorWell.swift; path = ../../../Source/ColorWell.swift; sourceTree = "<group>"; };
-		39DD5B2B1B023C8000BED513 /* HuePicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HuePicker.swift; path = ../../../Source/HuePicker.swift; sourceTree = "<group>"; };
+		401E052F1E747C3F00FC4AEE /* ColorPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorPicker.swift; sourceTree = "<group>"; };
+		401E05301E747C3F00FC4AEE /* ColorPickerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorPickerController.swift; sourceTree = "<group>"; };
+		401E05311E747C3F00FC4AEE /* ColorWell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorWell.swift; sourceTree = "<group>"; };
+		401E05321E747C3F00FC4AEE /* HuePicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HuePicker.swift; sourceTree = "<group>"; };
+		401E05331E747C3F00FC4AEE /* PickerImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PickerImage.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,7 +87,7 @@
 		39DD5AFC1B0235C700BED513 /* Example */ = {
 			isa = PBXGroup;
 			children = (
-				39DD5B1F1B02364600BED513 /* SwiftColorPicker */,
+				401E052E1E747C3F00FC4AEE /* Source */,
 				39DD5AFF1B0235C700BED513 /* AppDelegate.swift */,
 				39DD5B011B0235C700BED513 /* ViewController.swift */,
 				39DD5B031B0235C700BED513 /* Main.storyboard */,
@@ -121,16 +123,17 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		39DD5B1F1B02364600BED513 /* SwiftColorPicker */ = {
+		401E052E1E747C3F00FC4AEE /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				39DD5B281B023C8000BED513 /* ColorPicker.swift */,
-				39DD5B291B023C8000BED513 /* ColorPickerController.swift */,
-				39DD5B2A1B023C8000BED513 /* ColorWell.swift */,
-				39DD5B2B1B023C8000BED513 /* HuePicker.swift */,
+				401E052F1E747C3F00FC4AEE /* ColorPicker.swift */,
+				401E05301E747C3F00FC4AEE /* ColorPickerController.swift */,
+				401E05311E747C3F00FC4AEE /* ColorWell.swift */,
+				401E05321E747C3F00FC4AEE /* HuePicker.swift */,
+				401E05331E747C3F00FC4AEE /* PickerImage.swift */,
 			);
-			name = SwiftColorPicker;
-			path = Source;
+			name = Source;
+			path = ../../Source;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -177,14 +180,16 @@
 		39DD5AF21B0235C700BED513 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0640;
+				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = Sixpolys;
 				TargetAttributes = {
 					39DD5AF91B0235C700BED513 = {
 						CreatedOnToolsVersion = 6.3.2;
+						LastSwiftMigration = 0820;
 					};
 					39DD5B0E1B0235C700BED513 = {
 						CreatedOnToolsVersion = 6.3.2;
+						LastSwiftMigration = 0820;
 						TestTargetID = 39DD5AF91B0235C700BED513;
 					};
 				};
@@ -233,12 +238,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				39DD5B2F1B023C8000BED513 /* HuePicker.swift in Sources */,
+				401E05371E747C3F00FC4AEE /* HuePicker.swift in Sources */,
 				39DD5B021B0235C700BED513 /* ViewController.swift in Sources */,
-				39DD5B2E1B023C8000BED513 /* ColorWell.swift in Sources */,
+				401E05381E747C3F00FC4AEE /* PickerImage.swift in Sources */,
+				401E05361E747C3F00FC4AEE /* ColorWell.swift in Sources */,
 				39DD5B001B0235C700BED513 /* AppDelegate.swift in Sources */,
-				39DD5B2C1B023C8000BED513 /* ColorPicker.swift in Sources */,
-				39DD5B2D1B023C8000BED513 /* ColorPickerController.swift in Sources */,
+				401E05341E747C3F00FC4AEE /* ColorPicker.swift in Sources */,
+				401E05351E747C3F00FC4AEE /* ColorPickerController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -293,14 +299,17 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -337,8 +346,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -357,6 +368,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -367,7 +379,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = Example/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.sixpolys.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -377,7 +391,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = Example/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.sixpolys.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -395,7 +411,9 @@
 				);
 				INFOPLIST_FILE = ExampleTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.sixpolys.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Example.app/Example";
 			};
 			name = Debug;
@@ -410,7 +428,9 @@
 				);
 				INFOPLIST_FILE = ExampleTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.sixpolys.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Example.app/Example";
 			};
 			name = Release;

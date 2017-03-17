@@ -38,6 +38,9 @@ Create a Storyboard with 3 views and set the Classes to *ColorWell* (UIButton), 
         }
     }
 
+##Show case
+* Tactus https://itunes.apple.com/us/app/tactus/id557446352?ls=1&mt=8
+* Binary Clock Widget https://itunes.apple.com/us/app/binary-clock-widget/id965640631
 
 ##License
 MIT-License
