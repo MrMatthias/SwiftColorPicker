@@ -42,11 +42,11 @@ open class ColorPicker: UIView {
 
 
     open func saturationFromCurrentPoint() -> CGFloat {
-        return (1 / bounds.width) * currentPoint.x
+        return currentPoint.x
     }
     
     open func brigthnessFromCurrentPoint() -> CGFloat {
-        return (1 / bounds.height) * currentPoint.y
+        return currentPoint.y
     }
     
     open var color:UIColor  {
@@ -60,7 +60,7 @@ open class ColorPicker: UIView {
             if hue != h || pickerImage1 === nil {
                 self.h = hue
             }
-            currentPoint = CGPoint(x: saturation * bounds.width, y: brightness * bounds.height)
+            currentPoint = CGPoint(x: saturation, y: brightness)
             self.setNeedsDisplay()
         }
         get {
@@ -130,19 +130,15 @@ open class ColorPicker: UIView {
     fileprivate func handleTouche(_ touch:UITouch, ended:Bool) {
         // set current point
         let point = touch.location(in: self)
-        if self.bounds.contains(point) {
-            currentPoint = point
-        } else {
-            let x:CGFloat = min(bounds.width, max(0, point.x))
-            let y:CGFloat = min(bounds.height, max(0, point.y))
-            currentPoint = CGPoint(x: x, y: y)
-        }
-        handleColorChange(pointToColor(point), changing: !ended)
+        let x:CGFloat = min(bounds.width, max(0, point.x)) / bounds.width
+        let y:CGFloat = min(bounds.height, max(0, point.y)) / bounds.height
+        currentPoint = CGPoint(x: x, y: y)
+        handleColorChange(pointToColor(currentPoint), changing: !ended)
     }
     
     fileprivate func pointToColor(_ point:CGPoint) ->UIColor {
-        let s:CGFloat = min(1, max(0, (1.0 / bounds.width) * point.x))
-        let b:CGFloat = min(1, max(0, (1.0 / bounds.height) * point.y))
+        let s:CGFloat = min(1, max(0, point.x))
+        let b:CGFloat = min(1, max(0, point.y))
         return UIColor(hue: h, saturation: s, brightness: b, alpha:a)
     }
     
@@ -192,16 +188,17 @@ open class ColorPicker: UIView {
         }
         
         //// Oval Drawing
-        let ovalPath = UIBezierPath(ovalIn: CGRect(x: currentPoint.x - 5, y: currentPoint.y - 5, width: 10, height: 10))
+        let ovalPath = UIBezierPath(ovalIn: CGRect(x: currentPoint.x * bounds.width - 5, y: currentPoint.y * bounds.height - 5, width: 10, height: 10))
         UIColor.white.setStroke()
         ovalPath.lineWidth = 1
         ovalPath.stroke()
         
         //// Oval 2 Drawing
-        let oval2Path = UIBezierPath(ovalIn: CGRect(x: currentPoint.x - 4, y: currentPoint.y - 4, width: 8, height: 8))
+        let oval2Path = UIBezierPath(ovalIn: CGRect(x: currentPoint.x * bounds.width - 4, y: currentPoint.y * bounds.height - 4, width: 8, height: 8))
         UIColor.black.setStroke()
         oval2Path.lineWidth = 1
         oval2Path.stroke()
     }
 
 }
+
