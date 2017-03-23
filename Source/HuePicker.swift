@@ -13,8 +13,7 @@ open class HuePicker: UIView {
     open var h:CGFloat { // [0,1]
         set(value) {
             _h = min(1, max(0, value))
-            currentPoint = CGPoint(x: bounds.width * CGFloat(_h), y: 0)
-            handleRect = CGRect(x: currentPoint.x-3, y: 0, width: 6, height: bounds.height)
+            currentPoint = CGPoint(x: CGFloat(_h), y: 0)
             setNeedsDisplay()
         }
         get {
@@ -24,7 +23,6 @@ open class HuePicker: UIView {
     var image:UIImage?
     fileprivate var data:[UInt8]?
     fileprivate var currentPoint = CGPoint.zero
-    fileprivate var handleRect = CGRect.zero
     open var handleColor:UIColor = UIColor.black
     
     open var onHueChange:((_ hue:CGFloat, _ finished:Bool) -> Void)?
@@ -127,9 +125,8 @@ open class HuePicker: UIView {
     
     fileprivate func handleTouch(_ touch:UITouch, finished:Bool) {
         let point = touch.location(in: self)
-        currentPoint = CGPoint(x: max(0, min(bounds.width, point.x)) , y: 0)
-        handleRect = CGRect(x: currentPoint.x-3, y: 0, width: 6, height: bounds.height)
-        _h = (1/bounds.width) * currentPoint.x
+        currentPoint = CGPoint(x: max(0, min(bounds.width, point.x)) / bounds.width , y: 0)
+        _h = currentPoint.x
         onHueChange?(h, finished)
         setNeedsDisplay()
     }
@@ -155,6 +152,7 @@ open class HuePicker: UIView {
             img.draw(in: rect)
         }
 
+        let handleRect = CGRect(x: bounds.width * currentPoint.x-3, y: 0, width: 6, height: bounds.height)
         drawHueDragHandler(frame: handleRect)
     }
     
@@ -184,3 +182,4 @@ open class HuePicker: UIView {
 
 
 }
+
