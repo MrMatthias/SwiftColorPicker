@@ -96,8 +96,10 @@ open class ColorPicker: UIView {
             if let pImage2 = pickerImage2 {
                 pImage2.changeSize(Int(self.bounds.width), height: Int(self.bounds.height))
             }
-            renderBitmap()
-            self.setNeedsDisplay()
+            if let _ = pickerImage1 {
+                renderBitmap()
+                self.setNeedsDisplay()
+            }
         } else {
             super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
         }
