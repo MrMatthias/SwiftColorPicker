@@ -58,7 +58,7 @@ import UIKit
         if let col = previewColor {
             let ovalRect = CGRect(x: 5.5, y: 5.5, width: 35, height: 35)
             let ovalPath = UIBezierPath()
-            ovalPath.addArc(withCenter: CGPoint(x: ovalRect.midX, y: ovalRect.midY), radius: ovalRect.width / 2, startAngle: -90 * CGFloat(M_PI)/180, endAngle: 90 * CGFloat(M_PI)/180, clockwise: true)
+            ovalPath.addArc(withCenter: CGPoint(x: ovalRect.midX, y: ovalRect.midY), radius: ovalRect.width / 2, startAngle: -90 * .pi/180, endAngle: 90 * .pi/180, clockwise: true)
             ovalPath.addLine(to: CGPoint(x: ovalRect.midX, y: ovalRect.midY))
             ovalPath.close()
             
