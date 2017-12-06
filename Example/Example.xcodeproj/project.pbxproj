@@ -185,7 +185,6 @@
 				TargetAttributes = {
 					39DD5AF91B0235C700BED513 = {
 						CreatedOnToolsVersion = 6.3.2;
-						DevelopmentTeam = 7628KC5ZMK;
 						LastSwiftMigration = 0820;
 					};
 					39DD5B0E1B0235C700BED513 = {
@@ -378,10 +377,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 7628KC5ZMK;
 				INFOPLIST_FILE = Example/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.demo.sixpolys.Example;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.sixpolys.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 			};
@@ -391,10 +389,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 7628KC5ZMK;
 				INFOPLIST_FILE = Example/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.demo.sixpolys.Example;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.sixpolys.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 			};
