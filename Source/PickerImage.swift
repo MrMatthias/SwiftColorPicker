@@ -9,112 +9,132 @@
 import UIKit
 import ImageIO
 
-open class PickerImage {
-    var provider:CGDataProvider!
-    var imageSource:CGImageSource?
-    var image:UIImage?
-    var mutableData:CFMutableData
-    var width:Int
-    var height:Int
-    
-    fileprivate func createImageFromData(_ width:Int, height:Int) {
-        let colorSpace = CGColorSpaceCreateDeviceRGB()
-        let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedFirst.rawValue)
-        provider = CGDataProvider(data: mutableData)
-        imageSource = CGImageSourceCreateWithDataProvider(provider, nil)
-        let cgimg = CGImage(width: Int(width), height: Int(height), bitsPerComponent: Int(8), bitsPerPixel: Int(32), bytesPerRow: Int(width) * Int(4),
-            space: colorSpace, bitmapInfo: bitmapInfo, provider: provider!, decode: nil, shouldInterpolate: true, intent: CGColorRenderingIntent.defaultIntent)
-        image = UIImage(cgImage: cgimg!)
+public struct PickerImage {
+
+    var width: Int
+    var height: Int
+
+    var hue: CGFloat = 0
+    var alpha: CGFloat = 1.0
+
+    // MARK: Pixel Data struct
+
+    public struct PixelData {
+        var a:UInt8 = 255
+        var r:UInt8
+        var g:UInt8
+        var b:UInt8
     }
-    
-    func changeSize(_ width:Int, height:Int) {
+
+    // MARK: Image generation
+
+    private let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
+    private let bitmapInfo:CGBitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedFirst.rawValue)
+
+    public func getImage() -> UIImage? {
+        return self.imageFromARGB32Bitmap(pixels: self.pixelData, width: UInt(self.width), height: UInt(self.height))
+    }
+
+    /// Idea taken from: http://blog.human-friendly.com/drawing-images-from-pixel-data-in-swift
+    private func imageFromARGB32Bitmap(pixels:[PixelData], width:UInt, height:UInt) -> UIImage? {
+
+        let bitsPerComponent:UInt = 8
+        let bitsPerPixel:UInt = 32
+
+        assert(pixels.count == Int(width * height))
+
+        var data = pixels // Copy to mutable []
+        guard let providerRef = CGDataProvider(
+            data: NSData(bytes: &data, length: data.count * MemoryLayout<PixelData>.size)
+            ) else {
+                return nil
+        }
+
+        guard let cgim = CGImage(width: Int(width),
+                                 height: Int(height),
+                                 bitsPerComponent: Int(bitsPerComponent),
+                                 bitsPerPixel: Int(bitsPerPixel),
+                                 bytesPerRow: Int(width) * MemoryLayout<PixelData>.size,
+                                 space: rgbColorSpace,
+                                 bitmapInfo: bitmapInfo,
+                                 provider: providerRef,
+                                 decode: nil,
+                                 shouldInterpolate: true,
+                                 intent: .defaultIntent) else {
+                                    return nil
+        }
+
+        let image = UIImage(cgImage: cgim)
+        return image
+    }
+
+    // MARK: Size changes
+
+    mutating func changeSize(width: Int, height: Int) {
         self.width = width
         self.height = height
-        let size:Int = width * height * 4
-        CFDataSetLength(mutableData, size)
-        createImageFromData(width, height: height)
+
+        let whitePixel = PixelData(a: 255, r: 255, g: 255, b: 255)
+        self.pixelData = Array<PixelData>(repeating: whitePixel, count: Int(width * height))
+
+        self.writeColorData(hue: self.hue, alpha: self.alpha)
     }
-    
+
+    // MARK: Lifecycle
+
     init(width:Int, height:Int) {
         self.width = width
         self.height = height
-        let size:Int = width * height * 4
-        mutableData = CFDataCreateMutable(kCFAllocatorDefault, size)
-        createImageFromData(width, height: height)
+
+        let whitePixel = PixelData(a: 255, r: 255, g: 255, b: 255)
+        self.pixelData = Array<PixelData>(repeating: whitePixel, count: Int(width * height))
+
+        self.writeColorData(hue: self.hue, alpha: self.alpha)
     }
-    
-    open func writeColorData(_ h:CGFloat, a:CGFloat) {
 
-        let d = CFDataGetMutableBytePtr(self.mutableData)
-        
-        if width == 0 || height == 0 {
-            return
-        }
+    // MARK: Generating raw image data
 
-        var i:Int = 0
-        let h360:CGFloat = ((h == 1 ? 0 : h) * 360) / 60.0
-        let sector:Int = Int(floor(h360))
-        let f:CGFloat = h360 - CGFloat(sector)
-        let f1:CGFloat = 1.0 - f
-        var p:CGFloat = 0.0
-        var q:CGFloat = 0.0
-        var t:CGFloat = 0.0
-        let sd:CGFloat = 1.0 / CGFloat(width)
-        let vd:CGFloat =  1 / CGFloat(height)
-        
-        var double_s:CGFloat = 0
-        var pf:CGFloat = 0
-        let v_range = 0..<height
-        let s_range = 0..<width
-        
-        for v in v_range {
-            pf = 255 * CGFloat(v) * vd
-            for s in s_range {
-                i = (v * width + s) * 4
-                d?[i] = UInt8(255)
-                if s == 0 {
-                    q = pf
-                    d?[i+1] = UInt8(q)
-                    d?[i+2] = UInt8(q)
-                    d?[i+3] = UInt8(q)
-                    continue
-                }
-                
-                double_s = CGFloat(s) * sd
-                p = pf * (1.0 - double_s)
-                q = pf * (1.0 - double_s * f)
-                t = pf * ( 1.0 - double_s  * f1)
-                switch(sector) {
-                case 0:
-                    d?[i+1] = UInt8(pf)
-                    d?[i+2] = UInt8(t)
-                    d?[i+3] = UInt8(p)
-                case 1:
-                    d?[i+1] = UInt8(q)
-                    d?[i+2] = UInt8(pf)
-                    d?[i+3] = UInt8(p)
-                case 2:
-                    d?[i+1] = UInt8(p)
-                    d?[i+2] = UInt8(pf)
-                    d?[i+3] = UInt8(t)
-                case 3:
-                    d?[i+1] = UInt8(p)
-                    d?[i+2] = UInt8(q)
-                    d?[i+3] = UInt8(pf)
-                case 4:
-                    d?[i+1] = UInt8(t)
-                    d?[i+2] = UInt8(p)
-                    d?[i+3] = UInt8(pf)
-                default:
-                    d?[i+1] = UInt8(pf)
-                    d?[i+2] = UInt8(p)
-                    d?[i+3] = UInt8(q)
-                }
-                
-                
+    var pixelData: [PixelData]
+
+    public mutating func writeColorData(hue: CGFloat, alpha: CGFloat) {
+
+        self.hue = hue
+        self.alpha = alpha
+
+        let saturationSteps = self.width
+        let brightnessSteps = self.height
+
+        let saturationStepSize: CGFloat = 1.0 / CGFloat(saturationSteps)
+        let brightnessStepSize: CGFloat = 1.0 / CGFloat(brightnessSteps)
+
+        var currentBrightnessIndex = 0
+        while currentBrightnessIndex < brightnessSteps {
+
+            var currentSaturationIndex = 0
+            while currentSaturationIndex < saturationSteps {
+
+
+                let currentSaturation = CGFloat(currentSaturationIndex) * saturationStepSize
+                let currentBrightness = CGFloat(currentBrightnessIndex) * brightnessStepSize
+                let color = UIColor(hue: hue,
+                                    saturation: currentSaturation,
+                                    brightness: currentBrightness,
+                                    alpha: alpha)
+
+                var red: CGFloat = 0
+                var green: CGFloat = 0
+                var blue: CGFloat = 0
+                var alpha: CGFloat = 0
+                color.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+
+                let index = currentBrightnessIndex * width + currentSaturationIndex
+                self.pixelData[index] = PixelData(a: UInt8(alpha*255.0), r: UInt8(red*255.0), g: UInt8(green*255.0), b: UInt8(blue*255.0))
+
+                currentSaturationIndex += 1
             }
-        }
-    }
 
-    
+            currentBrightnessIndex += 1
+        }
+
+    }
 }
