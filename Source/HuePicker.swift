@@ -1,9 +1,7 @@
-//
-//  HuePicker.swift
-//
-//  Created by Matthias Schlemm on 06/03/15.
+//  Created by Matthias Schlemm on 05/03/15.
 //  Copyright (c) 2015 Sixpolys. All rights reserved.
-//
+//  Licensed under the MIT License.
+//  URL: https://github.com/MrMatthias/SwiftColorPicker
 
 import UIKit
 
