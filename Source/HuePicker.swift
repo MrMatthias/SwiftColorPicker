@@ -5,7 +5,7 @@
 
 import UIKit
 
-open class HuePicker: UIView {
+@IBDesignable open class HuePicker: UIView {
     
     var _h:CGFloat = 0.1111
     open var h:CGFloat { // [0,1]
@@ -31,6 +31,10 @@ open class HuePicker: UIView {
         self.h = h
     }
     
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
+        isUserInteractionEnabled = true;
+    }
 
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)

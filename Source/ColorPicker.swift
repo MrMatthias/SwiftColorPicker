@@ -6,7 +6,7 @@
 import ImageIO
 import UIKit
 
-open class ColorPicker: UIView {
+@IBDesignable open class ColorPicker: UIView {
 
     fileprivate var pickerImage1:PickerImage?
     fileprivate var pickerImage2:PickerImage?
@@ -90,6 +90,9 @@ open class ColorPicker: UIView {
 
     open override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "bounds" {
+            if(bounds.isEmpty) {
+                return
+            }
             if var pImage1 = pickerImage1 {
                 pImage1.changeSize(width: Int(self.bounds.width), height: Int(self.bounds.height))
             }
@@ -156,7 +159,7 @@ open class ColorPicker: UIView {
             self.pickerImage1 = PickerImage(width: Int(bounds.width), height: Int(bounds.height))
             self.pickerImage2 = PickerImage(width: Int(bounds.width), height: Int(bounds.height))
         }
-
+#if !TARGET_INTERFACE_BUILDER
         opQueue.addOperation { () -> Void in
             // Write colors to data array
             if self.data1Shown { self.pickerImage2!.writeColorData(hue: self.h, alpha:self.a) } else { self.pickerImage1!.writeColorData(hue: self.h, alpha:self.a) }
@@ -174,10 +177,20 @@ open class ColorPicker: UIView {
                     self.renderBitmap()
                 }
             })
+       
         }
+        #else
+        self.pickerImage1!.writeColorData(hue: self.h, alpha:self.a)
+        self.image = self.pickerImage1!.getImage()!
+        #endif
     }
 
     open override func draw(_ rect: CGRect) {
+        #if TARGET_INTERFACE_BUILDER
+        if pickerImage1 == nil {
+            commonInit()
+        }
+        #endif
         if let img = image {
             img.draw(in: rect)
         }

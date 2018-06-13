@@ -40,8 +40,7 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PNV-WL-JJn" customClass="ColorPicker" customModule="Example" customModuleProvider="target">
-                                <rect key="frame" x="59.5" y="81" width="256" height="256"/>
-                                <color key="backgroundColor" red="0.88715994359999995" green="0.2287584245" blue="0.22893077140000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <rect key="frame" x="60" y="81" width="256" height="256"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="256" id="60z-Y0-VlB"/>
                                     <constraint firstAttribute="width" constant="256" id="Bh2-ig-alc"/>
@@ -75,6 +74,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="32.799999999999997" y="80.50974512743629"/>
         </scene>
     </scenes>
 </document>
